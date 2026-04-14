@@ -17,7 +17,7 @@
             <artifactId>exec-maven-plugin</artifactId>
             <version>3.1.0</version>
             <configuration>
-                <mainClass>${exec.mainClass}</mainClass>
+                <mainClass>com.mycompany.servicedeskproject.ServiceDeskProject</mainClass>
             </configuration>
         </plugin>
     </plugins>
