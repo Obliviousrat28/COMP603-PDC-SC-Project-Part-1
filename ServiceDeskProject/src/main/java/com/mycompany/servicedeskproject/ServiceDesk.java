@@ -10,5 +10,7 @@ package com.mycompany.servicedeskproject;
  * @author tomwi
  */
 public class ServiceDesk {
-        
+    public static void main(String[] args) {
+        System.out.println("Hello World");
+    }
 }
