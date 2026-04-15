@@ -31,9 +31,32 @@ public class ServiceDesk {
         
         switch(num){
             case 1:
+                //these print statement are purely for testing if they work 
+                //they can be keep to show user they pressed button
                 System.out.println("Opening ticket creation");
                 //code to go to a different java file for creation
                 break;
+            case 2:
+                System.out.println("Opening ticket viewing");
+                //code to access a view of the tickets
+                break;
+            case 3:
+                System.out.println("Opening ticket update status");
+                //code for going to java file to change ticket status
+                break;
+            case 4:
+                System.out.println("Opening tickey update priority");
+                //code for going to java file to change ticket priority
+                break;
+            case 5:
+                System.out.println("Opening ticket resolver");
+                //code for resolving the tickets
+                break;
+            case 0:
+                //code for exiting software
+                System.out.println("Exiting software");
+                //code to exit the software clean and easy
+                System.exit(0);
         }
     }
 }
