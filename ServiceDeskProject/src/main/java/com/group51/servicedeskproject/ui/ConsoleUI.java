@@ -78,6 +78,8 @@ public class ConsoleUI {
         System.out.print("Enter ID: ");
         int id = scanner.nextInt();
         scanner.nextLine();
+        
+        checkId(id);
 
         System.out.print("Enter Title: ");
         String title = scanner.nextLine();
@@ -93,6 +95,21 @@ public class ConsoleUI {
         ticketService.createTicket(id, title, description, priority, department);
 
         System.out.println("Ticket created!");
+    }
+    
+    private void checkId(int ID) {
+        List<Ticket> tickets = ticketService.getAllTickets();
+
+        if (tickets.isEmpty()) {
+            return;
+        }
+
+        for (Ticket t : tickets) {
+            if (ID == t.getId()) {
+                System.out.println("Warning: Ticket ID " + ID + " already exists!");
+                // You might want to throw an error or ask for a new ID here
+            }
+        }
     }
 
     private void viewTickets() {
