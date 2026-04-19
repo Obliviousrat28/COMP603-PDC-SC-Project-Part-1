@@ -11,7 +11,6 @@ import com.group51.servicedeskproject.repository.InMemoryTicketRepository;
 import com.group51.servicedeskproject.repository.TicketRepository;
 import com.group51.servicedeskproject.service.TicketService;
 import com.group51.servicedeskproject.ui.ConsoleUI;
-import java.util.Scanner;
 
 /**
  *
