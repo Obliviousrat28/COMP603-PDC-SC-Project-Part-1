@@ -13,25 +13,17 @@ import java.util.List;
  * @author kyvas
  */
 public class InMemoryTicketRepository implements TicketRepository {
-    
+    // This repository saves tickets in memory and clears when the app is closed
     // ArrayList to store tickets
     private List<Ticket> tickets = new ArrayList<>();
 
     @Override
-    public void save(Ticket ticket) {
-        tickets.add(ticket);
+    public void saveAll(List<Ticket> tickets) {
+        this.tickets = new ArrayList<>(tickets); // copy for safety
     }
-
+    
     @Override
-    public Ticket findById(int id) {
-        return tickets.stream()
-                .filter(t -> t.getId() == id)
-                .findFirst()
-                .orElse(null);
-    }
-
-    @Override
-    public List<Ticket> findAll() {
-        return tickets;
+    public List<Ticket> load() {
+        return new ArrayList<>(tickets); // return copy
     }
 }

@@ -38,7 +38,8 @@ public class ConsoleUI {
 
         } while (choice != 0);
 
-        System.out.println("Exiting system...");
+        ticketService.saveAll();
+        System.out.println("Tickets saved! Exiting system...");
     }
 
     private void showMenu() {
@@ -66,7 +67,7 @@ public class ConsoleUI {
                 resolveTicket();
                 break;
             case 0:
-                System.out.println("Goodbye!");
+                System.out.println("Saving and exiting...");
                 break;
             default:
                 System.out.println("Invalid option");
@@ -76,11 +77,26 @@ public class ConsoleUI {
     // --- Actions ---
 
     private void createTicket() {
-        System.out.print("Enter ID: ");
-        int id = scanner.nextInt();
-        scanner.nextLine();
-        
-        checkId(id);
+
+        int id;
+
+        while (true) {
+            System.out.print("Enter ID: ");
+            id = Integer.parseInt(scanner.nextLine());
+
+            boolean exists = false;
+
+            for (Ticket t : ticketService.getAllTickets()) {
+                if (t.getId() == id) {
+                    exists = true;
+                    break;
+                }
+            }
+
+            if (!exists) break;
+
+            System.out.println("ID already exists. Try again.");
+        }
 
         System.out.print("Enter Title: ");
         String title = scanner.nextLine();
@@ -91,27 +107,11 @@ public class ConsoleUI {
         System.out.print("Enter Department: ");
         String department = scanner.nextLine();
 
-        Priority priority = Priority.LOW; // keep simple for now
+        Priority priority = Priority.LOW;
 
         ticketService.createTicket(id, title, description, priority, department);
 
         System.out.println("Ticket created!");
-    }
-    
-    private void checkId(int ID) {
-        List<Ticket> tickets = ticketService.getAllTickets();
-
-        if (tickets.isEmpty()) {
-            return;
-        }
-
-        for (Ticket t : tickets) {
-            if (ID == t.getId()) {
-                System.out.println("Warning: Ticket ID " + ID + " already exists!");
-                System.out.println("Please enter a new Ticket.");
-                createTicket();
-            }
-        }
     }
 
     private void viewTickets() {
@@ -188,11 +188,11 @@ public class ConsoleUI {
                 break;
         }
 
-        if (status != null) {
+        try {
             ticketService.updateStatus(id, status);
             System.out.println("Status updated!");
-        } else {
-            System.out.println("Invalid status");
+        } catch (Exception e) {
+            System.out.println("Ticket not found.");
         }
     }
 

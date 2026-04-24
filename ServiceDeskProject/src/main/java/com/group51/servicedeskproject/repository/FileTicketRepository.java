@@ -12,51 +12,41 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class FileTicketRepository implements TicketRepository {
-    private final String FILE_PATH = "tickets.txt";
-    private List<Ticket> tickets = new ArrayList<>();
 
-    public FileTicketRepository() {
-        loadFromFile();
-    }
+    private static final String FILE_PATH = "tickets.txt";
 
     @Override
-    public void save(Ticket ticket) {
-        // Remove if existing to prevent duplicates, then add the updated version
-        tickets.removeIf(t -> t.getId() == ticket.getId());
-        tickets.add(ticket);
-        saveToFile();
-    }
-
-    @Override
-    public Ticket findById(int id) {
-        return tickets.stream().filter(t -> t.getId() == id).findFirst().orElse(null);
-    }
-
-    @Override
-    public List<Ticket> findAll() {
-        return tickets;
-    }
-
-    private void saveToFile() {
+    public void saveAll(List<Ticket> tickets) {
         try (PrintWriter out = new PrintWriter(new FileWriter(FILE_PATH))) {
+
             for (Ticket t : tickets) {
-                // Formatting: id|title|description|department|priority|status
-                out.println(t.getId() + "|" + t.getTitle() + "|" + t.getDescription() + "|" + 
-                            t.getDepartment() + "|" + t.getPriority() + "|" + t.getStatus());
+                // Format: id|title|description|department|priority|status
+                out.println(t.getId() + "|" +
+                            t.getTitle() + "|" +
+                            t.getDescription() + "|" +
+                            t.getDepartment() + "|" +
+                            t.getPriority() + "|" +
+                            t.getStatus());
             }
+
         } catch (IOException e) {
             System.err.println("Error saving to file: " + e.getMessage());
         }
     }
 
-    private void loadFromFile() {
+    @Override
+    public List<Ticket> load() {
+        List<Ticket> tickets = new ArrayList<>();
+
         File file = new File(FILE_PATH);
-        if (!file.exists()) return;
+        if (!file.exists()) return tickets;
 
         try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
             String line;
+
             while ((line = reader.readLine()) != null) {
                 String[] parts = line.split("\\|");
+
                 if (parts.length == 6) {
                     int id = Integer.parseInt(parts[0]);
                     String title = parts[1];
@@ -65,13 +55,17 @@ public class FileTicketRepository implements TicketRepository {
                     Priority priority = Priority.valueOf(parts[4]);
                     Status status = Status.valueOf(parts[5]);
 
-                    Ticket t = new Ticket(id, title, desc, priority, dept);
-                    t.updateStatus(status);
-                    tickets.add(t);
+                    Ticket ticket = new Ticket(id, title, desc, priority, dept);
+                    ticket.updateStatus(status);
+
+                    tickets.add(ticket);
                 }
             }
+
         } catch (IOException | IllegalArgumentException e) {
             System.err.println("Error loading from file: " + e.getMessage());
         }
+
+        return tickets;
     }
 }

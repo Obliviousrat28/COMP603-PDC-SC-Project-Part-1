@@ -7,7 +7,7 @@ package com.group51.servicedeskproject.app;
  */
 
 
-import com.group51.servicedeskproject.repository.InMemoryTicketRepository;
+import com.group51.servicedeskproject.repository.FileTicketRepository;
 import com.group51.servicedeskproject.repository.TicketRepository;
 import com.group51.servicedeskproject.service.TicketService;
 import com.group51.servicedeskproject.ui.ConsoleUI;
@@ -19,7 +19,7 @@ import com.group51.servicedeskproject.ui.ConsoleUI;
 public class ServiceDesk {
     public static void main(String[] args) {
 
-        TicketRepository repository = new InMemoryTicketRepository();
+        TicketRepository repository = new FileTicketRepository();
         TicketService ticketService = new TicketService(repository);
 
         ConsoleUI ui = new ConsoleUI(ticketService);
