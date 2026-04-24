@@ -47,7 +47,7 @@ public class ConsoleUI {
         System.out.println("1. Create Ticket");
         System.out.println("2. View Tickets");
         System.out.println("3. Update Status");
-        System.out.println("4. Resolve Ticket");
+        System.out.println("4. Update Priority");
         System.out.println("0. Exit");
         System.out.print("Enter choice: ");
     }
@@ -64,7 +64,7 @@ public class ConsoleUI {
                 updateStatus();
                 break;
             case 4:
-                resolveTicket();
+                updatePriority();
                 break;
             case 0:
                 System.out.println("Saving and exiting...");
@@ -116,15 +116,10 @@ public class ConsoleUI {
 
     private void viewTickets() {
         boolean stayingInView = true;
-        while (stayingInView) {
-        // MOVE THIS INSIDE THE LOOP: This ensures if you add a ticket, 
-        // it shows up immediately when you refresh the view.
-            List<Ticket> allTickets = ticketService.getAllTickets();
 
-            if (allTickets.isEmpty()) {
-                System.out.println("No tickets found in system.");
-                return; 
-            }
+        while (stayingInView) {
+
+            List<Ticket> allTickets = ticketService.getAllTickets();
 
             System.out.println("\n--- View Tickets ---");
             System.out.println("1. View All Tickets");
@@ -133,34 +128,41 @@ public class ConsoleUI {
             System.out.println("0. Back to Main Menu");
             System.out.print("Selection: ");
 
-            int choice = scanner.nextInt();
-            scanner.nextLine(); 
+            int choice = Integer.parseInt(scanner.nextLine());
 
             switch (choice) {
+
                 case 1:
                     displayList("ALL TICKETS", allTickets);
-                    break; // CRITICAL: This stops it from falling into case 2
+                    break;
+
                 case 2:
                     List<Ticket> inProgress = allTickets.stream()
-                        .filter(t -> t.getStatus() == Status.IN_PROGRESS || t.getStatus() == Status.OPEN)
-                        .collect(Collectors.toList());
+                            .filter(t -> t.getStatus() == Status.IN_PROGRESS
+                                      || t.getStatus() == Status.OPEN)
+                            .collect(Collectors.toList());
+
                     displayList("IN-PROGRESS & OPEN", inProgress);
-                    break; // CRITICAL: This stops it from falling into case 3
+                    break;
+
                 case 3:
                     List<Ticket> resolved = allTickets.stream()
-                        .filter(t -> t.getStatus() == Status.RESOLVED)
-                        .collect(Collectors.toList());
+                            .filter(t -> t.getStatus() == Status.RESOLVED)
+                            .collect(Collectors.toList());
+
                     displayList("RESOLVED", resolved);
-                    break; 
+                    break;
+
                 case 0:
                     stayingInView = false;
                     break;
+
                 default:
                     System.out.println("Invalid choice.");
             }
         }
     }
-
+    
     private void updateStatus() {
         System.out.print("Enter Ticket ID: ");
         int id = scanner.nextInt();
@@ -196,21 +198,58 @@ public class ConsoleUI {
         }
     }
 
-    private void resolveTicket() {
+    private void updatePriority() {
         System.out.print("Enter Ticket ID: ");
-        int id = scanner.nextInt();
+        int id = Integer.parseInt(scanner.nextLine());
 
-        ticketService.updateStatus(id, Status.RESOLVED);
+        System.out.println("1. LOW");
+        System.out.println("2. MEDIUM");
+        System.out.println("3. HIGH");
+        System.out.println("4. CRITICAL");
 
-        System.out.println("Ticket resolved!");
+        System.out.print("Select priority: ");
+        int choice = Integer.parseInt(scanner.nextLine());
+
+        Priority priority;
+
+        switch (choice) {
+            case 1:
+                priority = Priority.LOW;
+                break;
+            case 2:
+                priority = Priority.MEDIUM;
+                break;
+            case 3:
+                priority = Priority.HIGH;
+                break;
+            case 4:
+                priority = Priority.CRITICAL;
+                break;
+            default:
+                System.out.println("Invalid priority.");
+                return;
+        }
+
+        try {
+            ticketService.updatePriority(id, priority);
+            System.out.println("Priority updated!");
+        } catch (Exception e) {
+            System.out.println("Ticket not found.");
+        }
     }
+
     private void displayList(String title, List<Ticket> list) {
         System.out.println("\n=== " + title + " ===");
         if (list.isEmpty()) {
             System.out.println("No tickets found in this category.");
         } else {
             list.forEach(t -> 
-                System.out.println(t.getId() + " | " + t.getTitle() + " | [" + t.getStatus() + "]")
+                System.out.println(
+                    t.getId() + " | " 
+                    + t.getTitle() 
+                    + " | [" + t.getStatus() + "]"
+                    + " | Priority: " + t.getPriority()
+                )
             );
         }
         System.out.println("==============================\n");

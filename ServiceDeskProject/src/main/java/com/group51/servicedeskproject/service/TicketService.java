@@ -42,6 +42,17 @@ public class TicketService {
 
         ticket.updateStatus(status);
     }
+    
+    public void updatePriority(int id, Priority priority) {
+        Ticket ticket = getTicketById(id);
+
+        if (ticket == null) {
+            System.out.println("Ticket not found: " + id);
+            return;
+        }
+
+        ticket.setPriority(priority);
+    }
 
     public Ticket getTicketById(int id) {
         return tickets.stream()

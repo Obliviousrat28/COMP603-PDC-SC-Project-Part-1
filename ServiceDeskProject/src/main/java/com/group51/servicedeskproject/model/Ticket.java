@@ -55,14 +55,9 @@ public class Ticket {
         this.status = status;
     }
     
-    public void resolve() {
-    if (this.status == Status.RESOLVED
-) {
-        throw new IllegalStateException("Ticket is already closed");
+    public void setPriority(Priority priority) {
+        this.priority = priority;
     }
-    this.status = Status.RESOLVED
-;
-}
 }
 
     
