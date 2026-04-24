@@ -10,6 +10,7 @@ import com.group51.servicedeskproject.model.Ticket;
 import com.group51.servicedeskproject.service.TicketService;
 import java.util.List;
 import java.util.Scanner;
+import java.util.stream.Collectors;
 
 /**
  *
@@ -107,26 +108,57 @@ public class ConsoleUI {
         for (Ticket t : tickets) {
             if (ID == t.getId()) {
                 System.out.println("Warning: Ticket ID " + ID + " already exists!");
-                // You might want to throw an error or ask for a new ID here
+                System.out.println("Please enter a new Ticket.");
+                createTicket();
             }
         }
     }
 
     private void viewTickets() {
-        List<Ticket> tickets = ticketService.getAllTickets();
+        boolean stayingInView = true;
+        while (stayingInView) {
+        // MOVE THIS INSIDE THE LOOP: This ensures if you add a ticket, 
+        // it shows up immediately when you refresh the view.
+            List<Ticket> allTickets = ticketService.getAllTickets();
 
-        if (tickets.isEmpty()) {
-            System.out.println("No tickets found.");
-            return;
+            if (allTickets.isEmpty()) {
+                System.out.println("No tickets found in system.");
+                return; 
+            }
+
+            System.out.println("\n--- View Tickets ---");
+            System.out.println("1. View All Tickets");
+            System.out.println("2. View In-Progress and Open Tickets");
+            System.out.println("3. View Resolved Tickets");
+            System.out.println("0. Back to Main Menu");
+            System.out.print("Selection: ");
+
+            int choice = scanner.nextInt();
+            scanner.nextLine(); 
+
+            switch (choice) {
+                case 1:
+                    displayList("ALL TICKETS", allTickets);
+                    break; // CRITICAL: This stops it from falling into case 2
+                case 2:
+                    List<Ticket> inProgress = allTickets.stream()
+                        .filter(t -> t.getStatus() == Status.IN_PROGRESS || t.getStatus() == Status.OPEN)
+                        .collect(Collectors.toList());
+                    displayList("IN-PROGRESS & OPEN", inProgress);
+                    break; // CRITICAL: This stops it from falling into case 3
+                case 3:
+                    List<Ticket> resolved = allTickets.stream()
+                        .filter(t -> t.getStatus() == Status.RESOLVED)
+                        .collect(Collectors.toList());
+                    displayList("RESOLVED", resolved);
+                    break; 
+                case 0:
+                    stayingInView = false;
+                    break;
+                default:
+                    System.out.println("Invalid choice.");
+            }
         }
-
-        tickets.forEach(t ->
-            System.out.println(
-                t.getId() + " | " +
-                t.getTitle() + " | " +
-                t.getStatus()
-            )
-        );
     }
 
     private void updateStatus() {
@@ -172,4 +204,16 @@ public class ConsoleUI {
 
         System.out.println("Ticket resolved!");
     }
+    private void displayList(String title, List<Ticket> list) {
+        System.out.println("\n=== " + title + " ===");
+        if (list.isEmpty()) {
+            System.out.println("No tickets found in this category.");
+        } else {
+            list.forEach(t -> 
+                System.out.println(t.getId() + " | " + t.getTitle() + " | [" + t.getStatus() + "]")
+            );
+        }
+        System.out.println("==============================\n");
+    }
 }
+
