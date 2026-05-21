@@ -4,20 +4,29 @@
  */
 package com.group51.servicedeskproject.ui;
 
+import com.group51.servicedeskproject.service.TicketService;
+
 /**
  *
  * @author tomwi
  */
 public class GUI extends javax.swing.JFrame {
     
-    private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(GUI.class.getName());
+    private TicketService ticketService;
 
-    /**
-     * Creates new form GUI
-     */
+    // Update the constructor to accept it
+    public GUI(TicketService ticketService) {
+        this.ticketService = ticketService;
+        initComponents();
+    }
+    
+    // Remember to keep your empty constructor if NetBeans demands it, 
+    // but we will primarily use this one!
     public GUI() {
         initComponents();
     }
+    
+    private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(GUI.class.getName());
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -31,8 +40,6 @@ public class GUI extends javax.swing.JFrame {
         jLabel1 = new javax.swing.JLabel();
         jButton1 = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
-        jButton3 = new javax.swing.JButton();
-        jButton4 = new javax.swing.JButton();
         jButton6 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -41,12 +48,10 @@ public class GUI extends javax.swing.JFrame {
         jLabel1.setText("Ticket Service Desk");
 
         jButton1.setText("Create Ticket\n");
+        jButton1.addActionListener(this::jButton1ActionPerformed);
 
         jButton2.setText("View Ticket");
-
-        jButton3.setText("Update Ticket");
-
-        jButton4.setText("Resolve Ticket\n");
+        jButton2.addActionListener(this::jButton2ActionPerformed);
 
         jButton6.setText("Quit\n");
         jButton6.addActionListener(this::jButton6ActionPerformed);
@@ -58,11 +63,9 @@ public class GUI extends javax.swing.JFrame {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jButton4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jButton3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jButton2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jButton6, javax.swing.GroupLayout.PREFERRED_SIZE, 105, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, 105, Short.MAX_VALUE)
+                    .addComponent(jButton6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(150, 150, 150))
             .addGroup(layout.createSequentialGroup()
                 .addGap(95, 95, 95)
@@ -74,15 +77,11 @@ public class GUI extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addGap(12, 12, 12)
                 .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGap(60, 60, 60)
                 .addComponent(jButton1)
-                .addGap(18, 18, 18)
+                .addGap(35, 35, 35)
                 .addComponent(jButton2)
-                .addGap(18, 18, 18)
-                .addComponent(jButton3)
-                .addGap(18, 18, 18)
-                .addComponent(jButton4)
-                .addGap(18, 18, 18)
+                .addGap(35, 35, 35)
                 .addComponent(jButton6)
                 .addContainerGap(56, Short.MAX_VALUE))
         );
@@ -91,8 +90,47 @@ public class GUI extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton6ActionPerformed
-        // TODO add your handling code here:
+        int confirm = javax.swing.JOptionPane.showConfirmDialog(
+            this, 
+            "Are you sure you want to exit the Service Desk System? Your progress will be saved.", 
+            "Confirm Exit", 
+            javax.swing.JOptionPane.YES_NO_OPTION,
+            javax.swing.JOptionPane.QUESTION_MESSAGE
+        );
+
+        if (confirm == javax.swing.JOptionPane.YES_OPTION) {
+            try {
+                // Check your team's exact save method name in TicketService.java!
+                // It might be named saveTickets(), save(), or saveData()
+                if (this.ticketService != null) {
+                    this.ticketService.saveAll(); 
+                }
+            } catch (Exception e) {
+                javax.swing.JOptionPane.showMessageDialog(this,
+                    "Warning: Could not save tickets.\n" + e.getMessage(),
+                    "Save Error",
+                    javax.swing.JOptionPane.WARNING_MESSAGE);
+            }
+
+            System.exit(0); 
+        }
     }//GEN-LAST:event_jButton6ActionPerformed
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        // 1. Create an instance of your Create_Ticket frame
+        Create_Ticket createFrame = new Create_Ticket(this.ticketService); 
+        createFrame.setLocationRelativeTo(null);
+        createFrame.setVisible(true);
+        this.dispose();
+    }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+        // Revert to empty parentheses until your teammate adds the constructor to Veiw_ticket
+        Veiw_ticket viewFrame = new Veiw_ticket(this.ticketService);
+        viewFrame.setLocationRelativeTo(null);
+        viewFrame.setVisible(true);
+        this.dispose();
+    }//GEN-LAST:event_jButton2ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -122,8 +160,6 @@ public class GUI extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
-    private javax.swing.JButton jButton3;
-    private javax.swing.JButton jButton4;
     private javax.swing.JButton jButton6;
     private javax.swing.JLabel jLabel1;
     // End of variables declaration//GEN-END:variables
