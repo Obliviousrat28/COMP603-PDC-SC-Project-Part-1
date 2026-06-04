@@ -12,6 +12,8 @@ import com.group51.servicedeskproject.repository.TicketRepository;
 import com.group51.servicedeskproject.service.TicketService;
 import com.group51.servicedeskproject.ui.ConsoleUI;
 import com.group51.servicedeskproject.ui.GUI;
+import com.group51.servicedeskproject.ui.LoginScreen;
+
 
 /**
  *
@@ -21,20 +23,27 @@ import com.group51.servicedeskproject.ui.GUI;
 
 public class ServiceDesk {
     public static void main(String[] args) {
-        // 1. Keep your working backend logic exactly as it is!
-        TicketRepository repository = new FileTicketRepository();
-        TicketService ticketService = new TicketService(repository);
+        // 1. Initialize your running Ticket backend database repository layer
+        com.group51.servicedeskproject.repository.TicketRepository repository = 
+            new com.group51.servicedeskproject.repository.FileTicketRepository();
+        com.group51.servicedeskproject.service.TicketService ticketService = 
+            new com.group51.servicedeskproject.service.TicketService(repository);
 
-        // 2. Replace ConsoleUI with your GUI launch wrapper
+        // 2. Initialize your running User backend profile layer
+        com.group51.servicedeskproject.repository.UserRepository userRepository = 
+            new com.group51.servicedeskproject.repository.SqliteUserRepository(); 
+        com.group51.servicedeskproject.service.UserService userService = 
+            new com.group51.servicedeskproject.service.UserService(userRepository);
+
+        // 3. Launch the login portal frame with BOTH dependencies passed in
         java.awt.EventQueue.invokeLater(new Runnable() {
             @Override
             public void run() {
-                // FIX: Pass the running backend engine right here into the parentheses!
-                GUI startScreen = new GUI(ticketService); 
-
-                // Center it and show it
-                startScreen.setLocationRelativeTo(null);
-                startScreen.setVisible(true);
+                // Fixed: Added 'userService' as the second parameter here!
+                LoginScreen loginScreen = new LoginScreen(ticketService, userService);
+                loginScreen.pack();
+                loginScreen.setLocationRelativeTo(null);
+                loginScreen.setVisible(true);
             }
         });
     }
