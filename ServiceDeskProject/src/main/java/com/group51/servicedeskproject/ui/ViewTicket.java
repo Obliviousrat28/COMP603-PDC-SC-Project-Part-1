@@ -4,6 +4,7 @@
  */
 package com.group51.servicedeskproject.ui;
 
+import com.group51.servicedeskproject.model.User;
 import com.group51.servicedeskproject.service.TicketService;
 
 /**
@@ -12,51 +13,40 @@ import com.group51.servicedeskproject.service.TicketService;
  */
 public class ViewTicket extends javax.swing.JFrame {
     
-    private TicketService ticketService; // Your backend pipeline connection
+    private TicketService ticketService; 
+    private User currentUser;
     
-    // Constructor that receives the running backend service from the main GUI dashboard
-    public ViewTicket(javax.swing.JFrame parentFrame, TicketService ticketService) {
+    public ViewTicket(javax.swing.JFrame parentFrame, TicketService ticketService, User user) {
         this.ticketService = ticketService;
+        this.currentUser = user;
         initComponents();
         
-        // 1. Inherit the exact window canvas scale and location from the previous frame
         this.setSize(parentFrame.getWidth(), parentFrame.getHeight());
-        
-        // 2. DISENGAGE GROUP LAYOUT ENGINE SO WE CAN DEFINE THE SHAPES MANUALLY
         this.getContentPane().setLayout(null);
-        
-        // Lock down the side panel dimensions to exactly its preferred sizing
         jPanel3.setSize(jPanel3.getPreferredSize());
         
-        // 3. Keep the control panel sticky immediately to the right of the table
         this.addComponentListener(new java.awt.event.ComponentAdapter() {
             @Override
             public void componentResized(java.awt.event.ComponentEvent e) {
                 int frameWidth = getContentPane().getWidth();
                 int frameHeight = getContentPane().getHeight();
                 
-                // A. Keep the top bar panel stretching across the whole screen width
                 jPanel1.setBounds(0, 0, frameWidth, jPanel1.getHeight());
                 
-                // B. Calculate dynamic stretching room for the table
                 int sidePanelWidth = jPanel3.getWidth();
-                int tableWidth = frameWidth - sidePanelWidth - 40; // 40px padding margins
-                int tableHeight = frameHeight - jPanel1.getHeight() - 30;
+                int tableWidth = frameWidth - sidePanelWidth - 40; 
+                int tableHeight = frameHeight - jPanel1.getHeight() - 50;
                 
-                // Force layout limits so components don't collapse into invisible pixels
                 if (tableWidth < 200) tableWidth = 200;
                 if (tableHeight < 150) tableHeight = 150;
                 
-                // Set the exact location/dimensions for the table viewport box
                 jScrollPane1.setBounds(10, jPanel1.getHeight() + 10, tableWidth, tableHeight);
                 
-                // C. Stick the control sidebar exactly 15px to the right of the table view
                 int targetX = jScrollPane1.getX() + jScrollPane1.getWidth() + 15;
-                int targetY = jScrollPane1.getY(); // Align perfectly square with the top of the table
+                int targetY = jScrollPane1.getY(); 
                 
                 jPanel3.setBounds(targetX, targetY, sidePanelWidth, jPanel3.getHeight());
                 
-                // D. Re-align the frame title text header precisely to the screen center axis
                 int titleX = (frameWidth - titleLabel.getWidth()) / 2;
                 if (titleX > backButton.getWidth()) {
                     titleLabel.setLocation(titleX, titleLabel.getY());
@@ -64,7 +54,6 @@ public class ViewTicket extends javax.swing.JFrame {
             }
         });
         
-        // 4. Clean up table cosmetics 
         jTable1.setRowHeight(24);
         jTable1.setShowHorizontalLines(true);
         jTable1.setGridColor(new java.awt.Color(230, 230, 230));
@@ -72,32 +61,23 @@ public class ViewTicket extends javax.swing.JFrame {
         populateTicketTable();
     }
 
-    // Keep the empty fallback constructor so NetBeans GUI builder is happy
     public ViewTicket() {
         initComponents();
     }
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(ViewTicket.class.getName()); 
 
-    
     private void populateTicketTable() {
-        // DIAGNOSTIC 1: Check if the service database handed down is null
         if (this.ticketService == null) {
-            System.out.println("VIEW SCREEN SYSTEM CRITICAL: ticketService is NULL! Data pipeline handshake failed.");
+            System.out.println("VIEW SCREEN CRITICAL: ticketService is NULL!");
             return;
         }
 
-        System.out.println("?VIEW SCREEN SYSTEM: Attempting to pull data out of backend tracking engine...");
-
         javax.swing.table.DefaultTableModel model = (javax.swing.table.DefaultTableModel) jTable1.getModel();
-
-        // Explicitly redefine columns to wipe out NetBeans placeholder column headers
         model.setColumnIdentifiers(new Object[]{"ID", "Title", "Priority", "Status"});
         model.setRowCount(0); 
 
         int ticketCount = 0;
-
-        // DIAGNOSTIC 2: Check if your backend collection loop is executing
         for (com.group51.servicedeskproject.model.Ticket t : this.ticketService.getAllTickets()) {
             model.addRow(new Object[]{
                 t.getId(),
@@ -107,8 +87,7 @@ public class ViewTicket extends javax.swing.JFrame {
             });
             ticketCount++;
         }
-
-        System.out.println("VIEW SCREEN SYSTEM: Successfully read and pasted " + ticketCount + " rows to the UI!");
+        System.out.println("VIEW SCREEN SYSTEM: Read " + ticketCount + " rows.");
     }
     /**
      * This method is called from within the constructor to initialize the form.
@@ -267,9 +246,9 @@ public class ViewTicket extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void backButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_backButtonActionPerformed
-        GUI mainMenu = new GUI(this, this.ticketService);
+        GUI mainMenu = new GUI(this, this.ticketService, this.currentUser);
         mainMenu.setSize(this.getWidth(), this.getHeight());
-        mainMenu.setLocation(this.getLocationOnScreen()); // Keep position lock!
+        mainMenu.setLocation(this.getLocationOnScreen()); 
         mainMenu.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_backButtonActionPerformed
@@ -305,17 +284,15 @@ public class ViewTicket extends javax.swing.JFrame {
 
             if (ticket != null) {
                 try {
-                    // 2. Convert display strings like "In-Progress" to match the strict uppercase enum "IN_PROGRESS"
+                    // 1. Convert display string (e.g., "IN_PROGRESS") to match your structure's strict uppercase enum
                     String standardEnumString = newStatus.toUpperCase().replace("-", "_");
+                    com.group51.servicedeskproject.model.Status statusEnum = com.group51.servicedeskproject.model.Status.valueOf(standardEnumString);
 
-                    // 3. Update the ticket's internal status object
-                    ticket.updateStatus(com.group51.servicedeskproject.model.Status.valueOf(standardEnumString));
-
-                    // 4. Force update the visible table view cell instantly
-                    jTable1.setValueAt(newStatus, selectedRow, 3);
+                    // 2. Call your service's built-in status updater using the method from your autocomplete screenshot!
+                    this.ticketService.updateStatus(ticketId, statusEnum);
 
                     javax.swing.JOptionPane.showMessageDialog(this, "Status updated successfully!");
-                    populateTicketTable(); // Re-render table layout to show updates instantly
+                    populateTicketTable(); // Re-render the visual table to show the update instantly
 
                 } catch (IllegalArgumentException ex) {
                     javax.swing.JOptionPane.showMessageDialog(this, 
