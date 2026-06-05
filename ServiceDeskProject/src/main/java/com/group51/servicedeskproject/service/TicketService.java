@@ -17,34 +17,40 @@ import java.util.List;
 public class TicketService {
 
     private TicketRepository repository;
-    private List<Ticket> tickets;
-    
+
     public TicketService(TicketRepository repository) {
         this.repository = repository;
-        this.tickets = repository.getAllTickets();
     }
 
     public Ticket createTicket(int id, String title, String description,
-        Priority priority, String department) {
+                           Priority priority, String department) {
+
+        if (repository.findById(id) != null) {
+            System.out.println("Ticket ID already exists");
+            return null;
+        }
 
         Ticket ticket = new Ticket(id, title, description, priority, department);
-        tickets.add(ticket);
+        repository.save(ticket);
         return ticket;
     }
     
     public void updateStatus(int id, Status status) {
-        Ticket ticket = getTicketById(id);
 
-        if (ticket == null) {                               // null safety
+        Ticket ticket = repository.findById(id);
+
+        if (ticket == null) {
             System.out.println("Ticket not found: " + id);
             return;
         }
 
         ticket.updateStatus(status);
+        repository.update(ticket);
     }
     
     public void updatePriority(int id, Priority priority) {
-        Ticket ticket = getTicketById(id);
+
+        Ticket ticket = repository.findById(id);
 
         if (ticket == null) {
             System.out.println("Ticket not found: " + id);
@@ -52,43 +58,31 @@ public class TicketService {
         }
 
         ticket.setPriority(priority);
+        repository.update(ticket);
     }
-
+    
     public Ticket getTicketById(int id) {
-        return tickets.stream()
-                .filter(t -> t.getId() == id)
-                .findFirst()
-                .orElse(null);
+        return repository.findById(id);
     }
-
+    
     public List<Ticket> getAllTickets() {
-        return tickets;
-    }
-    
-    public void saveAll() {
-        if (this.repository != null) {
-            // Pass the live running array list to the disk writer file structure
-            this.repository.saveAll(this.tickets);
-        }
+        return repository.findAll();
     }
 
-    public void closeTicket(int id) {
-        updateStatus(id, Status.RESOLVED);
-    }
-    
     public boolean isIdExists(int id) {
-        return getTicketById(id) != null; // Iterated through all tickets and found no match.
+        return repository.findById(id) != null;
     }
-    
+
     public int getNextAvailableId() {
         int maxId = 0;
-        // Loop through current tickets to find the highest ID number used so far
-        for (Ticket t : this.getAllTickets()) {
+
+        for (Ticket t : repository.findAll()) {
             if (t.getId() > maxId) {
                 maxId = t.getId();
             }
         }
-        return maxId + 1; // The next available ID is just the highest ID + 1
+
+        return maxId + 1;
     }
 }
 
