@@ -26,4 +26,10 @@ public class InMemoryTicketRepository implements TicketRepository {
     public List<Ticket> load() {
         return new ArrayList<>(tickets); // return copy
     }
+    
+    @Override
+    public List<Ticket> getAllTickets() {
+        // Simply return the memory list this specific class uses (line 8)
+        return this.tickets; 
+    }
 }

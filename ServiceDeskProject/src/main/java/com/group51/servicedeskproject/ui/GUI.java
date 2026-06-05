@@ -4,6 +4,7 @@
  */
 package com.group51.servicedeskproject.ui;
 
+import com.group51.servicedeskproject.model.User;
 import com.group51.servicedeskproject.service.TicketService;
 
 /**
@@ -13,11 +14,55 @@ import com.group51.servicedeskproject.service.TicketService;
 public class GUI extends javax.swing.JFrame {
     
     private TicketService ticketService;
+    private User currentUser;
 
     // Update the constructor to accept it
-    public GUI(TicketService ticketService) {
+    public GUI(javax.swing.JFrame parentFrame, TicketService ticketService, User user) {
         this.ticketService = ticketService;
+        this.currentUser = user; // <-- Make sure this line assigns the user!
         initComponents();
+        
+        this.setBounds(parentFrame.getBounds());
+        
+        this.addComponentListener(new java.awt.event.ComponentAdapter() {
+            @Override
+            public void componentResized(java.awt.event.ComponentEvent e) {
+                int frameWidth = getContentPane().getWidth();
+                
+                // Align Title Text to Center
+                int titleX = (frameWidth - jLabel1.getWidth()) / 2;
+                jLabel1.setLocation(titleX, jLabel1.getY());
+                
+                // Align Buttons Menu Column to Center
+                int buttonX = (frameWidth - jButton1.getWidth()) / 2;
+                jButton1.setLocation(buttonX, jButton1.getY());
+                jButton2.setLocation(buttonX, jButton2.getY());
+                jButton6.setLocation(buttonX, jButton6.getY());
+            }
+        });
+    }   
+    
+    // 2. Updated constructor: This is the one your LoginScreen calls!
+    public GUI(TicketService ticketService, User user) {
+        this.ticketService = ticketService;
+        this.currentUser = user; // Fixed the unassigned variable issue
+        initComponents();
+        this.setLocationRelativeTo(null);
+        
+        this.addComponentListener(new java.awt.event.ComponentAdapter() {
+            @Override
+            public void componentResized(java.awt.event.ComponentEvent e) {
+                int frameWidth = getContentPane().getWidth();
+                
+                int titleX = (frameWidth - jLabel1.getWidth()) / 2;
+                jLabel1.setLocation(titleX, jLabel1.getY());
+                
+                int buttonX = (frameWidth - jButton1.getWidth()) / 2;
+                jButton1.setLocation(buttonX, jButton1.getY());
+                jButton2.setLocation(buttonX, jButton2.getY());
+                jButton6.setLocation(buttonX, jButton6.getY());
+            }
+        });
     }
     
     // Remember to keep your empty constructor if NetBeans demands it, 
@@ -60,17 +105,18 @@ public class GUI extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jButton2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, 105, Short.MAX_VALUE)
-                    .addComponent(jButton6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addGap(150, 150, 150))
             .addGroup(layout.createSequentialGroup()
-                .addGap(95, 95, 95)
-                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 211, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(94, Short.MAX_VALUE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(95, 95, 95)
+                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 211, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(135, 135, 135)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(jButton2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, 125, Short.MAX_VALUE)
+                            .addComponent(jButton6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                .addGap(94, 94, 94))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -117,17 +163,19 @@ public class GUI extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton6ActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        // 1. Create an instance of your Create_Ticket frame
-        Create_Ticket createFrame = new Create_Ticket(this.ticketService); 
-        createFrame.setLocationRelativeTo(null);
+        // 1. Create an instance of your CreateTicket frame
+        CreateTicket createFrame = new CreateTicket(this, this.ticketService, this.currentUser); 
+        createFrame.setSize(this.getWidth(), this.getHeight());
+        createFrame.setLocation(this.getLocationOnScreen());
         createFrame.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        // Revert to empty parentheses until your teammate adds the constructor to Veiw_ticket
-        Veiw_ticket viewFrame = new Veiw_ticket(this.ticketService);
-        viewFrame.setLocationRelativeTo(null);
+        // Revert to empty parentheses until your teammate adds the constructor to ViewTicket
+        ViewTicket viewFrame = new ViewTicket(this, this.ticketService, this.currentUser);
+        viewFrame.setSize(this.getWidth(), this.getHeight());
+        viewFrame.setLocation(this.getLocationOnScreen());
         viewFrame.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_jButton2ActionPerformed

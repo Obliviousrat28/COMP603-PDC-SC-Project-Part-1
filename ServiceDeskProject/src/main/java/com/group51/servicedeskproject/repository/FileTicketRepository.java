@@ -15,6 +15,12 @@ public class FileTicketRepository implements TicketRepository {
 
     private static final String FILE_PATH = "tickets.txt";
 
+    private List<Ticket> tickets;
+    
+    public FileTicketRepository() {
+        this.tickets = load(); // 👈 Make sure this method is actually being called here!
+    }
+    
     @Override
     public void saveAll(List<Ticket> tickets) {
         try (PrintWriter out = new PrintWriter(new FileWriter(FILE_PATH))) {
@@ -67,5 +73,11 @@ public class FileTicketRepository implements TicketRepository {
         }
 
         return tickets;
+    }
+    
+    @Override
+    public List<Ticket> getAllTickets() {
+        // Simply return the list we loaded on startup!
+        return this.tickets;
     }
 }

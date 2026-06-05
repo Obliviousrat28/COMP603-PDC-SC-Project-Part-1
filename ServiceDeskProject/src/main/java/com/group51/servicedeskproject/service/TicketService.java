@@ -21,11 +21,11 @@ public class TicketService {
     
     public TicketService(TicketRepository repository) {
         this.repository = repository;
-        this.tickets = repository.load();
+        this.tickets = repository.getAllTickets();
     }
 
     public Ticket createTicket(int id, String title, String description,
-                           Priority priority, String department) {
+        Priority priority, String department) {
 
         Ticket ticket = new Ticket(id, title, description, priority, department);
         tickets.add(ticket);
@@ -66,11 +66,29 @@ public class TicketService {
     }
     
     public void saveAll() {
-        repository.saveAll(tickets);
+        if (this.repository != null) {
+            // Pass the live running array list to the disk writer file structure
+            this.repository.saveAll(this.tickets);
+        }
     }
 
     public void closeTicket(int id) {
         updateStatus(id, Status.RESOLVED);
+    }
+    
+    public boolean isIdExists(int id) {
+        return getTicketById(id) != null; // Iterated through all tickets and found no match.
+    }
+    
+    public int getNextAvailableId() {
+        int maxId = 0;
+        // Loop through current tickets to find the highest ID number used so far
+        for (Ticket t : this.getAllTickets()) {
+            if (t.getId() > maxId) {
+                maxId = t.getId();
+            }
+        }
+        return maxId + 1; // The next available ID is just the highest ID + 1
     }
 }
 

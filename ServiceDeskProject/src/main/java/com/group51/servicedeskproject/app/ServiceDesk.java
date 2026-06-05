@@ -7,11 +7,13 @@ package com.group51.servicedeskproject.app;
  */
 
 
-import com.group51.servicedeskproject.repository.FileTicketRepository;
+import com.group51.servicedeskproject.repository.DatabaseManager;
 import com.group51.servicedeskproject.repository.TicketRepository;
+import com.group51.servicedeskproject.repository.FileTicketRepository;
+import com.group51.servicedeskproject.repository.UserRepository;
+import com.group51.servicedeskproject.repository.SqliteUserRepository;
 import com.group51.servicedeskproject.service.TicketService;
-import com.group51.servicedeskproject.ui.ConsoleUI;
-import com.group51.servicedeskproject.ui.GUI;
+import com.group51.servicedeskproject.service.UserService;
 import com.group51.servicedeskproject.ui.LoginScreen;
 
 
@@ -23,26 +25,30 @@ import com.group51.servicedeskproject.ui.LoginScreen;
 
 public class ServiceDesk {
     public static void main(String[] args) {
-        // 1. Initialize your running Ticket backend database repository layer
-        com.group51.servicedeskproject.repository.TicketRepository repository = 
-            new com.group51.servicedeskproject.repository.FileTicketRepository();
-        com.group51.servicedeskproject.service.TicketService ticketService = 
-            new com.group51.servicedeskproject.service.TicketService(repository);
+        // 0. Initialize SQLite tables
+        DatabaseManager.initializeDatabase();
 
-        // 2. Initialize your running User backend profile layer
-        com.group51.servicedeskproject.repository.UserRepository userRepository = 
-            new com.group51.servicedeskproject.repository.SqliteUserRepository(); 
-        com.group51.servicedeskproject.service.UserService userService = 
-            new com.group51.servicedeskproject.service.UserService(userRepository);
+        // 1. Ticket Backend
+        TicketRepository repository = new FileTicketRepository();
+        TicketService ticketService = new TicketService(repository);
 
-        // 3. Launch the login portal frame with BOTH dependencies passed in
+        // 2. User Backend
+        UserRepository userRepository = new SqliteUserRepository();
+        UserService userService = new UserService(userRepository);
+
+        // 3. Launch portal
         java.awt.EventQueue.invokeLater(new Runnable() {
             @Override
             public void run() {
-                // Fixed: Added 'userService' as the second parameter here!
                 LoginScreen loginScreen = new LoginScreen(ticketService, userService);
-                loginScreen.pack();
+
+                // 1. Set a solid, clean starting dimension so it never boots at 0px
+                loginScreen.setSize(450, 500); 
+
+                // 2. Center it on the user's monitor screen
                 loginScreen.setLocationRelativeTo(null);
+
+                // 3. Make it visible
                 loginScreen.setVisible(true);
             }
         });

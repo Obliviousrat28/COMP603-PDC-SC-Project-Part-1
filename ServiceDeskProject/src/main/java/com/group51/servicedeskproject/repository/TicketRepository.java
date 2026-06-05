@@ -14,4 +14,6 @@ import java.util.List;
 public interface TicketRepository {
     void saveAll(List<Ticket> tickets);
     List<Ticket> load();
+    
+    List<Ticket> getAllTickets();
 }
