@@ -214,23 +214,14 @@ public class GUI extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
-        try {
-            SessionManager.clearSession();
-
-            // 1. Re-instantiate the repository using your database connection
-            UserRepository userRepository = new DerbyUserRepository(DatabaseConnection.getInstance().getConnection());
-
-            // 2. Define the missing freshUserService variable here!
-            UserService freshUserService = new UserService(userRepository);
-
-            // 3. Now passing it here works perfectly
-            LoginScreen freshLogin = new LoginScreen(this.ticketService, freshUserService);
-            freshLogin.setLocationRelativeTo(null);
-            freshLogin.setVisible(true);
-            this.dispose();
-        } catch (Exception ex) {
-            logger.log(Level.SEVERE, "Logout exception", ex);
-        }
+        SessionManager.clearSession();
+        UserRepository userRepository =
+                new DerbyUserRepository(DatabaseConnection.getInstance().getConnection());
+        UserService freshUserService = new UserService(userRepository);
+        LoginScreen freshLogin = new LoginScreen(this.ticketService, freshUserService);
+        freshLogin.setLocationRelativeTo(null);
+        freshLogin.setVisible(true);
+        this.dispose();
     }//GEN-LAST:event_jButton3ActionPerformed
 
     private void btnChangeRolesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnChangeRolesActionPerformed
