@@ -6,6 +6,8 @@ package com.group51.servicedeskproject.app;
 
 import database.DatabaseConnection;
 import java.sql.Connection;
+import java.sql.DatabaseMetaData;
+import java.sql.ResultSet;
 
 /**
  *
@@ -15,6 +17,15 @@ public class TestDB {
     public static void main(String[] args) {
         try (Connection conn = DatabaseConnection.getConnection()) {
             System.out.println("Database connected successfully!");
+            
+            DatabaseMetaData meta = conn.getMetaData();
+            ResultSet rs = meta.getTables(null, null, "TICKETS", null);
+
+            if (rs.next()) {
+                System.out.println("Tickets table exists!");
+            } else {
+                System.out.println("Tickets table NOT found.");
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
