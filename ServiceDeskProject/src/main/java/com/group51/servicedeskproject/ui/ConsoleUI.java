@@ -43,8 +43,7 @@ public class ConsoleUI {
 
         } while (choice != 0);
 
-        ticketService.saveAll();
-        System.out.println("Tickets saved! Exiting system...");
+        System.out.println("Exiting system...");
     }
 
     private void showMenu() {

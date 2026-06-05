@@ -136,16 +136,6 @@ public class GUI extends javax.swing.JFrame {
         );
 
         if (confirm == javax.swing.JOptionPane.YES_OPTION) {
-            try {
-                if (this.ticketService != null) {
-                    this.ticketService.saveAll(); 
-                }
-            } catch (Exception e) {
-                javax.swing.JOptionPane.showMessageDialog(this,
-                    "Warning: Could not save tickets.\n" + e.getMessage(),
-                    "Save Error",
-                    javax.swing.JOptionPane.WARNING_MESSAGE);
-            }
             System.exit(0); 
         }
     }//GEN-LAST:event_jButton6ActionPerformed
