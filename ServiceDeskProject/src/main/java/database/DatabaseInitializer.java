@@ -14,7 +14,7 @@ import java.sql.SQLException;
 public class DatabaseInitializer {
     public static void init() {
 
-        try (Connection conn = DatabaseConnection.getConnection()) {
+        try (Connection conn = DatabaseConnection.getInstance().getConnection()) {
 
             if (!tableExists(conn, "TICKETS")) {
                 createTickets(conn);

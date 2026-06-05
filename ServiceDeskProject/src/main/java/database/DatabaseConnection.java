@@ -14,17 +14,29 @@ import java.sql.SQLException;
  */
 public class DatabaseConnection {
     
+    private static DatabaseConnection instance;
+    private Connection connection;
+    
     private static final String URL = "jdbc:derby:ServiceDeskDB_Ebd;create=true";
-
-    static {
+    
+    private DatabaseConnection() {
         try {
             Class.forName("org.apache.derby.jdbc.EmbeddedDriver");
-        } catch (ClassNotFoundException e) {
+            this.connection = DriverManager.getConnection(URL);
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
+    
+    // Singleton Pattern to ensure only one instance of DatabaseConnection is created
+    public static synchronized DatabaseConnection getInstance() {
+        if (instance == null) {
+            instance = new DatabaseConnection();
+        }
+        return instance;
+    }
 
-    public static Connection getConnection() throws SQLException {
+    public Connection getConnection() throws SQLException {
         return DriverManager.getConnection(URL);
     }
 }

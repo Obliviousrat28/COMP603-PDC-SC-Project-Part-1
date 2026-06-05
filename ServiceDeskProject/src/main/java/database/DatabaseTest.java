@@ -16,7 +16,7 @@ public class DatabaseTest {
     public static void checkTicketsTable() {
         String sql = "SELECT * FROM Tickets";
 
-        try (Connection conn = DatabaseConnection.getConnection();
+        try (Connection conn = DatabaseConnection.getInstance().getConnection();
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
 
