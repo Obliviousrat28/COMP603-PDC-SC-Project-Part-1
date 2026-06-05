@@ -12,20 +12,15 @@ import java.sql.SQLException;
  * @author kyvas
  */
 public class DatabaseInitializer {
-    public static void init() {
+    public static void init() throws SQLException {
 
-        try (Connection conn = DatabaseConnection.getInstance().getConnection()) {
+        Connection conn = DatabaseConnection.getInstance().getConnection();
+        if (!tableExists(conn, "TICKETS")) {
+            createTickets(conn);
+        }
 
-            if (!tableExists(conn, "TICKETS")) {
-                createTickets(conn);
-            }
-
-            if (!tableExists(conn, "USERS")) {
-                createUsers(conn);
-            }
-
-        } catch (SQLException e) {
-            e.printStackTrace();
+        if (!tableExists(conn, "USERS")) {
+            createUsers(conn);
         }
     }
     

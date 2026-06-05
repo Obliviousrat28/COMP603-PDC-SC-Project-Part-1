@@ -163,20 +163,14 @@ public class GUI extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
-        try {
-            SessionManager.clearSession();
-            
-            UserRepository userRepository =
-                    new DerbyUserRepository(DatabaseConnection.getInstance().getConnection());
-            
-            UserService freshUserService = new UserService(userRepository);
-            LoginScreen freshLogin = new LoginScreen(this.ticketService, freshUserService);
-            freshLogin.setLocationRelativeTo(null);
-            freshLogin.setVisible(true);
-            this.dispose();
-        } catch (SQLException ex) {
-            logger.log(Level.SEVERE, null, ex);
-        }
+        SessionManager.clearSession();
+        UserRepository userRepository =
+                new DerbyUserRepository(DatabaseConnection.getInstance().getConnection());
+        UserService freshUserService = new UserService(userRepository);
+        LoginScreen freshLogin = new LoginScreen(this.ticketService, freshUserService);
+        freshLogin.setLocationRelativeTo(null);
+        freshLogin.setVisible(true);
+        this.dispose();
     }//GEN-LAST:event_jButton3ActionPerformed
 
     /**

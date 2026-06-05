@@ -8,26 +8,24 @@ import database.DatabaseConnection;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 
 /**
  *
  * @author kyvas
  */
 public class TestDB {
-    public static void main(String[] args) {
-        try (Connection conn = DatabaseConnection.getInstance().getConnection()) {
-            System.out.println("Database connected successfully!");
-            
-            DatabaseMetaData meta = conn.getMetaData();
-            ResultSet rs = meta.getTables(null, null, "TICKETS", null);
+    public static void main(String[] args) throws SQLException {
+        Connection conn = DatabaseConnection.getInstance().getConnection();
+        System.out.println("Database connected successfully!");
 
-            if (rs.next()) {
-                System.out.println("Tickets table exists!");
-            } else {
-                System.out.println("Tickets table NOT found.");
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
+        DatabaseMetaData meta = conn.getMetaData();
+        ResultSet rs = meta.getTables(null, null, "TICKETS", null);
+
+        if (rs.next()) {
+            System.out.println("Tickets table exists!");
+        } else {
+            System.out.println("Tickets table NOT found.");
         }
     }
 }
