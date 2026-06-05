@@ -6,7 +6,6 @@ package com.group51.servicedeskproject.ui;
 
 import com.group51.servicedeskproject.model.User;
 import com.group51.servicedeskproject.repository.FileTicketRepository;
-import com.group51.servicedeskproject.repository.SqliteUserRepository;
 import com.group51.servicedeskproject.repository.TicketRepository;
 import com.group51.servicedeskproject.repository.UserRepository;
 import com.group51.servicedeskproject.service.TicketService;
@@ -255,20 +254,6 @@ public class LoginScreen extends javax.swing.JFrame {
     /**
      * @param args the command line arguments
      */
-    public static void main(String[] args) {
-    // 1. Keep your working ticket backend logic
-        TicketRepository repository = new FileTicketRepository();
-        TicketService ticketService = new TicketService(repository);
-        UserRepository userRepository = new SqliteUserRepository(); 
-        UserService userService = new UserService(userRepository);
-
-        java.awt.EventQueue.invokeLater(() -> {
-            LoginScreen loginScreen = new LoginScreen(ticketService, userService);
-            loginScreen.pack();
-            loginScreen.setLocationRelativeTo(null);
-            loginScreen.setVisible(true);
-        });
-    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel Title;
