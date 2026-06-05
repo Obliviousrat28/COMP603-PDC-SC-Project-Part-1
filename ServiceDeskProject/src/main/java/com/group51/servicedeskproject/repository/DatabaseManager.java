@@ -12,31 +12,40 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 public class DatabaseManager {
-    // This creates a file named "servicedesk.db" in the root directory of your project
-    private static final String URL = "jdbc:sqlite:servicedesk.db";
+    // 1. Derby Embedded URL setup. This creates a folder named "ServiceDeskDB" inside your project root
+    private static final String URL = "jdbc:derby:ServiceDeskUserDB;create=true";
 
     public static Connection getConnection() throws SQLException {
         return DriverManager.getConnection(URL);
     }
 
-    // Call this method once when the app starts up to build your tables automatically
     public static void initializeDatabase() {
-        String createUsersTable = "CREATE TABLE IF NOT EXISTS users ("
-                + "id INTEGER PRIMARY KEY AUTOINCREMENT, "
-                + "username TEXT UNIQUE NOT NULL, "
-                + "password_hash TEXT NOT NULL, "
-                + "role TEXT NOT NULL DEFAULT 'ROLE_USER'"
-                + ");";
+        // 2. Updated SQL syntax to be strictly compliant with Apache Derby standards
+        String createUsersTable = "CREATE TABLE users ("
+                + "id INT GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 1) PRIMARY KEY, "
+                + "username VARCHAR(50) UNIQUE NOT NULL, "
+                + "password_hash VARCHAR(255) NOT NULL, "
+                + "role VARCHAR(20) DEFAULT 'USER' NOT NULL"
+                + ")";
 
         try (Connection conn = getConnection();
              Statement stmt = conn.createStatement()) {
             
-            // Execute table creation
-            stmt.execute(createUsersTable);
-            System.out.println("SQLite database initialized successfully.");
+            // Check if table already exists so Derby doesn't throw an error trying to recreate it
+            if (!tableExists(conn, "USERS")) {
+                stmt.execute(createUsersTable);
+                System.out.println("Derby Embedded Database initialized successfully.");
+            }
             
         } catch (SQLException e) {
             System.err.println("Error initializing database: " + e.getMessage());
+        }
+    }
+
+    // Helper method to keep Derby happy on startup
+    private static boolean tableExists(Connection conn, String tableName) throws SQLException {
+        try (java.sql.ResultSet rs = conn.getMetaData().getTables(null, null, tableName.toUpperCase(), null)) {
+            return rs.next();
         }
     }
 }
