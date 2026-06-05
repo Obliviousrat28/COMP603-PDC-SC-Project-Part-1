@@ -21,17 +21,22 @@ public class UserService {
      */
     public User loginOrCreateProfile(String username, String password) {
         User existingUser = userRepository.findByUsername(username);
+    
         if (existingUser != null) {
-            System.out.println("[UserService] Logging in existing user: " + username);
-            return existingUser;
+            // SECURITY FIX: Verify password before allowing login
+            if (existingUser.getPassword().equals(password)) {
+                System.out.println("[UserService] Logging in existing user: " + username);
+                return existingUser;
+            } else {
+                System.out.println("[UserService] Authentication FAILED for: " + username);
+                return null; // Return null to block unauthorized access
+            }
         }
 
-        // 2. If they don't exist, check if this is the absolute FIRST account
-        // IMPORTANT: Make sure your isDatabaseEmpty() method runs a fresh raw COUNT(*) query!
+        // Logic for new account registration remains the same...
         boolean isFirstAccount = userRepository.isDatabaseEmpty();
-        System.out.println("[UserService] Registering new user. Is database empty? " + isFirstAccount);
+        Role assignedRole = isFirstAccount ? Role.ADMIN : Role.USER;
 
-        Role assignedRole;
         if (isFirstAccount) {
             System.out.println("[UserService] First user rule triggered! Assigning ADMIN to: " + username);
             assignedRole = Role.ADMIN;
