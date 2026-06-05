@@ -28,7 +28,9 @@ public class DatabaseConnection {
         }
     }
     
-    // Singleton Pattern to ensure only one instance of DatabaseConnection is created
+    // Singleton pattern was applied to the DatabaseConnection class 
+    // to provide a single access point for database connectivity 
+    // throughout the application and prevent multiple instances of DatabaseConnection from being created.
     public static synchronized DatabaseConnection getInstance() {
         if (instance == null) {
             instance = new DatabaseConnection();

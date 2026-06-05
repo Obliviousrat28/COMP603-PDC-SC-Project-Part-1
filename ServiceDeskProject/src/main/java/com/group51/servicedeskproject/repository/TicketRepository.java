@@ -11,6 +11,7 @@ import java.util.List;
  *
  * @author kyvas
  */
+// DAO layer for Ticket
 public interface TicketRepository {
     void save(Ticket ticket);
 

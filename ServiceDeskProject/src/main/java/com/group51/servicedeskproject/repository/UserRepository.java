@@ -8,6 +8,8 @@ import com.group51.servicedeskproject.model.Role;
 import com.group51.servicedeskproject.model.User;
 import java.util.List;
 
+
+// DAO layer for User
 public interface UserRepository {
     void saveUser(User user);
     User findByUsername(String username);
