@@ -6,9 +6,12 @@ package com.group51.servicedeskproject.ui;
 
 import com.group51.servicedeskproject.model.User;
 import com.group51.servicedeskproject.service.TicketService;
+import com.group51.servicedeskproject.repository.SqliteUserRepository;
+import com.group51.servicedeskproject.service.UserService;
+import com.group51.servicedeskproject.service.SessionManager;
 
 /**
- *
+ * Responsive Service Desk Main Dashboard
  * @author tomwi
  */
 public class GUI extends javax.swing.JFrame {
@@ -16,63 +19,30 @@ public class GUI extends javax.swing.JFrame {
     private TicketService ticketService;
     private User currentUser;
 
-    // Update the constructor to accept it
     public GUI(javax.swing.JFrame parentFrame, TicketService ticketService, User user) {
         this.ticketService = ticketService;
-        this.currentUser = user; // <-- Make sure this line assigns the user!
+        this.currentUser = user; 
         initComponents();
-        
-        this.setBounds(parentFrame.getBounds());
-        
-        this.addComponentListener(new java.awt.event.ComponentAdapter() {
-            @Override
-            public void componentResized(java.awt.event.ComponentEvent e) {
-                int frameWidth = getContentPane().getWidth();
-                
-                // Align Title Text to Center
-                int titleX = (frameWidth - jLabel1.getWidth()) / 2;
-                jLabel1.setLocation(titleX, jLabel1.getY());
-                
-                // Align Buttons Menu Column to Center
-                int buttonX = (frameWidth - jButton1.getWidth()) / 2;
-                jButton1.setLocation(buttonX, jButton1.getY());
-                jButton2.setLocation(buttonX, jButton2.getY());
-                jButton6.setLocation(buttonX, jButton6.getY());
-            }
-        });
-    }   
+        this.setLocationRelativeTo(null);
+    }    
     
     // 2. Updated constructor: This is the one your LoginScreen calls!
     public GUI(TicketService ticketService, User user) {
         this.ticketService = ticketService;
-        this.currentUser = user; // Fixed the unassigned variable issue
+        this.currentUser = user; 
         initComponents();
+
+        // Keeps your dashboard grid crisp and legible
+        this.setMinimumSize(new java.awt.Dimension(800, 600)); 
+
         this.setLocationRelativeTo(null);
-        
-        this.addComponentListener(new java.awt.event.ComponentAdapter() {
-            @Override
-            public void componentResized(java.awt.event.ComponentEvent e) {
-                int frameWidth = getContentPane().getWidth();
-                
-                int titleX = (frameWidth - jLabel1.getWidth()) / 2;
-                jLabel1.setLocation(titleX, jLabel1.getY());
-                
-                int buttonX = (frameWidth - jButton1.getWidth()) / 2;
-                jButton1.setLocation(buttonX, jButton1.getY());
-                jButton2.setLocation(buttonX, jButton2.getY());
-                jButton6.setLocation(buttonX, jButton6.getY());
-            }
-        });
     }
     
-    // Remember to keep your empty constructor if NetBeans demands it, 
-    // but we will primarily use this one!
     public GUI() {
         initComponents();
     }
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(GUI.class.getName());
-
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -81,56 +51,77 @@ public class GUI extends javax.swing.JFrame {
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
+        java.awt.GridBagConstraints gridBagConstraints;
 
-        jLabel1 = new javax.swing.JLabel();
-        jButton1 = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
+        jPanel1 = new javax.swing.JPanel();
         jButton6 = new javax.swing.JButton();
+        jButton2 = new javax.swing.JButton();
+        jButton1 = new javax.swing.JButton();
+        jLabel1 = new javax.swing.JLabel();
+        jButton3 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-
-        jLabel1.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
-        jLabel1.setText("Ticket Service Desk");
-
-        jButton1.setText("Create Ticket\n");
-        jButton1.addActionListener(this::jButton1ActionPerformed);
-
-        jButton2.setText("View Ticket");
-        jButton2.addActionListener(this::jButton2ActionPerformed);
+        getContentPane().setLayout(new java.awt.GridBagLayout());
 
         jButton6.setText("Quit\n");
         jButton6.addActionListener(this::jButton6ActionPerformed);
 
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(95, 95, 95)
-                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 211, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(135, 135, 135)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jButton2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, 125, Short.MAX_VALUE)
-                            .addComponent(jButton6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
-                .addGap(94, 94, 94))
+        jButton2.setText("View Ticket");
+        jButton2.addActionListener(this::jButton2ActionPerformed);
+
+        jButton1.setText("Create Ticket\n");
+        jButton1.addActionListener(this::jButton1ActionPerformed);
+
+        jLabel1.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
+        jLabel1.setText("Ticket Service Desk");
+
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                .addContainerGap(133, Short.MAX_VALUE)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jButton6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jButton2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, 125, Short.MAX_VALUE))
+                .addGap(121, 121, 121))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                .addGap(0, 0, Short.MAX_VALUE)
+                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 211, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(87, 87, 87))
         );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(12, 12, 12)
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
                 .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(60, 60, 60)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 39, Short.MAX_VALUE)
                 .addComponent(jButton1)
-                .addGap(35, 35, 35)
+                .addGap(32, 32, 32)
                 .addComponent(jButton2)
-                .addGap(35, 35, 35)
+                .addGap(34, 34, 34)
                 .addComponent(jButton6)
-                .addContainerGap(56, Short.MAX_VALUE))
+                .addGap(61, 61, 61))
         );
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.ipadx = 81;
+        gridBagConstraints.ipady = 33;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(6, 6, 0, 6);
+        getContentPane().add(jPanel1, gridBagConstraints);
+
+        jButton3.setText("Log out");
+        jButton3.addActionListener(this::jButton3ActionPerformed);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.SOUTHEAST;
+        getContentPane().add(jButton3, gridBagConstraints);
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -146,8 +137,6 @@ public class GUI extends javax.swing.JFrame {
 
         if (confirm == javax.swing.JOptionPane.YES_OPTION) {
             try {
-                // Check your team's exact save method name in TicketService.java!
-                // It might be named saveTickets(), save(), or saveData()
                 if (this.ticketService != null) {
                     this.ticketService.saveAll(); 
                 }
@@ -157,7 +146,6 @@ public class GUI extends javax.swing.JFrame {
                     "Save Error",
                     javax.swing.JOptionPane.WARNING_MESSAGE);
             }
-
             System.exit(0); 
         }
     }//GEN-LAST:event_jButton6ActionPerformed
@@ -180,6 +168,16 @@ public class GUI extends javax.swing.JFrame {
         this.dispose();
     }//GEN-LAST:event_jButton2ActionPerformed
 
+    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+        SessionManager.clearSession();
+        SqliteUserRepository tempRepo = new SqliteUserRepository();
+        UserService freshUserService = new UserService(tempRepo);
+        LoginScreen freshLogin = new LoginScreen(this.ticketService, freshUserService);
+        freshLogin.setLocationRelativeTo(null);
+        freshLogin.setVisible(true);
+        this.dispose();
+    }//GEN-LAST:event_jButton3ActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -199,16 +197,16 @@ public class GUI extends javax.swing.JFrame {
         } catch (ReflectiveOperationException | javax.swing.UnsupportedLookAndFeelException ex) {
             logger.log(java.util.logging.Level.SEVERE, null, ex);
         }
-        //</editor-fold>
 
-        /* Create and display the form */
         java.awt.EventQueue.invokeLater(() -> new GUI().setVisible(true));
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
+    private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton6;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JPanel jPanel1;
     // End of variables declaration//GEN-END:variables
 }

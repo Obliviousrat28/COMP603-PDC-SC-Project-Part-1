@@ -21,71 +21,19 @@ public class LoginScreen extends javax.swing.JFrame {
     
     private TicketService ticketService;
     private UserService userService;
-    
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(LoginScreen.class.getName());
 
     public LoginScreen(TicketService ticketService, UserService userService) {
         this.ticketService = ticketService;
         this.userService = userService; 
-        initComponents();
+        initComponents(); 
+
+        // Set a safe minimum boundary so it can't squish smaller than default
+        this.setMinimumSize(new java.awt.Dimension(300, 400)); 
+
         this.setLocationRelativeTo(null);
         txtUsername.setText("");
         txtPassword.setText("");        
-        
-        // Use absolute positioning on the main container panes to force manual scaling
-        this.getContentPane().setLayout(null);
-        jPanel1.setLayout(null);
-        jPanel2.setLayout(null);
-        
-        this.addComponentListener(new java.awt.event.ComponentAdapter() {
-            @Override
-            public void componentResized(java.awt.event.ComponentEvent e) {
-                int frameWidth = getContentPane().getWidth();
-                int frameHeight = getContentPane().getHeight();
-                
-                // SAFETY FALLBACK: If window initializes at 0, pull the window's preferred pack sizes
-                if (frameWidth <= 0 || frameHeight <= 0) {
-                    frameWidth = LoginScreen.this.getWidth();
-                    frameHeight = LoginScreen.this.getHeight();
-                    
-                    // If those are still too small, use a solid minimum standard size
-                    if (frameWidth < 400) frameWidth = 400;
-                    if (frameHeight < 450) frameHeight = 450;
-                }
-                
-                // 1. Expand the Title Panel across the top border
-                jPanel2.setBounds(0, 0, frameWidth, 60);
-                int titleX = (frameWidth - Title.getWidth()) / 2;
-                Title.setLocation(titleX, 20);
-                
-                // 2. Center the form container panel right underneath the header
-                int formWidth = 300;
-                int formHeight = 320;
-                int formX = (frameWidth - formWidth) / 2;
-                int formY = jPanel2.getY() + jPanel2.getHeight() + 10;
-                jPanel1.setBounds(formX, formY, formWidth, formHeight);
-                
-                // 3. Arrange components tightly and neatly inside the centered panel
-                int panelCenter = formWidth / 2;
-                
-                jLabel1.setLocation(panelCenter - (jLabel1.getWidth() / 2), 20);
-                txtUsername.setLocation(panelCenter - (txtUsername.getWidth() / 2), 45);
-                
-                jLabel3.setLocation(panelCenter - (jLabel3.getWidth() / 2), 105);
-                txtPassword.setLocation(panelCenter - (txtPassword.getWidth() / 2), 130);
-                
-                btnConfirm.setLocation(panelCenter - (btnConfirm.getWidth() / 2), 195);
-                
-                // 4. Pin the Exit button into the bottom right window corner frame layer
-                getContentPane().add(btnExit);
-                int exitX = frameWidth - btnExit.getWidth() - 25;  
-                int exitY = frameHeight - btnExit.getHeight() - 25; 
-                btnExit.setLocation(exitX, exitY);
-                
-                // Force Java to paint the new component placements cleanly
-                getContentPane().repaint();
-            }
-        });
     }
 
     public LoginScreen() {
@@ -101,18 +49,22 @@ public class LoginScreen extends javax.swing.JFrame {
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
+        java.awt.GridBagConstraints gridBagConstraints;
 
+        jPanel3 = new javax.swing.JPanel();
         jPanel1 = new javax.swing.JPanel();
         txtUsername = new javax.swing.JTextField();
         txtPassword = new javax.swing.JTextField();
         jLabel1 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
         btnConfirm = new javax.swing.JButton();
-        btnExit = new javax.swing.JButton();
+        rememberMeCheckbox = new javax.swing.JCheckBox();
         jPanel2 = new javax.swing.JPanel();
         Title = new javax.swing.JLabel();
+        btnExit = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        getContentPane().setLayout(new java.awt.GridBagLayout());
 
         txtUsername.setText("...");
 
@@ -127,27 +79,28 @@ public class LoginScreen extends javax.swing.JFrame {
         btnConfirm.setText("Confirm");
         btnConfirm.addActionListener(this::btnConfirmActionPerformed);
 
-        btnExit.setText("Exit");
-        btnExit.addActionListener(this::btnExitActionPerformed);
+        rememberMeCheckbox.setText("Remember Me");
+        rememberMeCheckbox.addActionListener(this::rememberMeCheckboxActionPerformed);
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap(219, Short.MAX_VALUE)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 86, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(txtPassword, javax.swing.GroupLayout.PREFERRED_SIZE, 86, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(txtUsername, javax.swing.GroupLayout.PREFERRED_SIZE, 86, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 86, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(btnConfirm, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 86, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(168, 168, 168))
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 86, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(txtPassword, javax.swing.GroupLayout.PREFERRED_SIZE, 86, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(txtUsername, javax.swing.GroupLayout.PREFERRED_SIZE, 86, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 86, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(btnConfirm, javax.swing.GroupLayout.PREFERRED_SIZE, 86, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(171, 171, 171))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                        .addComponent(btnExit)
-                        .addContainerGap())))
+                        .addComponent(rememberMeCheckbox, javax.swing.GroupLayout.PREFERRED_SIZE, 109, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(158, 158, 158))))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -160,48 +113,76 @@ public class LoginScreen extends javax.swing.JFrame {
                 .addComponent(jLabel3)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(txtPassword, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
+                .addGap(22, 22, 22)
                 .addComponent(btnConfirm)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 51, Short.MAX_VALUE)
-                .addComponent(btnExit)
-                .addContainerGap())
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(rememberMeCheckbox)
+                .addContainerGap(25, Short.MAX_VALUE))
         );
 
-        Title.setText("Login page");
+        Title.setText("Login Page");
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
-                .addGap(164, 164, 164)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                .addContainerGap(236, Short.MAX_VALUE)
                 .addComponent(Title, javax.swing.GroupLayout.PREFERRED_SIZE, 74, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(165, Short.MAX_VALUE))
+                .addGap(176, 176, 176))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
-                .addContainerGap()
                 .addComponent(Title)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(0, 12, Short.MAX_VALUE))
         );
 
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
+        jPanel3.setLayout(jPanel3Layout);
+        jPanel3Layout.setHorizontalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 498, Short.MAX_VALUE)
+            .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jPanel3Layout.createSequentialGroup()
+                    .addContainerGap()
+                    .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addContainerGap()))
+            .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jPanel3Layout.createSequentialGroup()
+                    .addContainerGap()
+                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addContainerGap()))
         );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(0, 0, 0)
-                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, 0)
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE))
+        jPanel3Layout.setVerticalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 291, Short.MAX_VALUE)
+            .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jPanel3Layout.createSequentialGroup()
+                    .addContainerGap()
+                    .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+            .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
+                    .addContainerGap(35, Short.MAX_VALUE)
+                    .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addContainerGap()))
         );
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
+        getContentPane().add(jPanel3, gridBagConstraints);
+
+        btnExit.setText("Exit");
+        btnExit.addActionListener(this::btnExitActionPerformed);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.SOUTHEAST;
+        getContentPane().add(btnExit, gridBagConstraints);
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -219,20 +200,15 @@ public class LoginScreen extends javax.swing.JFrame {
             return;
         }
 
-        // 1. Check if the username already exists in your system repository database
-        // Assuming your userService has a method to fetch a user profile by name
         com.group51.servicedeskproject.model.User existingUser = null;
         try {
-            // Adjust this line if your method name is different (e.g., getUser, findByUsername)
             existingUser = userService.getUserByUsername(username); 
         } catch (Exception e) {
-            // Fallback if the method isn't implemented yet or throws an error
             logger.log(java.util.logging.Level.WARNING, "Check user existence failed", e);
         }
 
         User authenticatedUser = null;
 
-        // 2. If the user does NOT exist, prompt them with a Confirmation Dialog box
         if (existingUser == null) {
             int response = JOptionPane.showConfirmDialog(
                 this, 
@@ -242,26 +218,38 @@ public class LoginScreen extends javax.swing.JFrame {
                 JOptionPane.QUESTION_MESSAGE
             );
             
-            // If they click "No", stop the process immediately and let them fix the username typos
             if (response != JOptionPane.YES_OPTION) {
                 return; 
             }
         }
 
-        // 3. Proceed to login or register profile
         authenticatedUser = userService.loginOrCreateProfile(username, password);
 
         if (authenticatedUser != null) {
-            GUI mainMenu = new GUI(this, this.ticketService, authenticatedUser); 
-            mainMenu.setSize(this.getWidth(), this.getHeight());
-            mainMenu.setLocation(this.getLocationOnScreen()); 
+            if (rememberMeCheckbox.isSelected()) {
+                com.group51.servicedeskproject.service.SessionManager.saveSession(authenticatedUser.getUsername());
+            } else {
+                com.group51.servicedeskproject.service.SessionManager.clearSession();
+            }
+
+            GUI mainMenu = new GUI(this.ticketService, authenticatedUser);
+
+            // Let the GUI layout determine its own ideal, stretchy window size
+            mainMenu.pack(); 
+
+            // Center it beautifully on the monitor screen
+            mainMenu.setLocationRelativeTo(null); 
             mainMenu.setVisible(true);
             this.dispose();
+
         } else {
-            // This handles the case where the user exists, but typed the wrong password
-            JOptionPane.showMessageDialog(this, "Incorrect password for this username.", "Login Failed", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Incorrect password for this username.", "Error", JOptionPane.ERROR_MESSAGE);
         }
     }//GEN-LAST:event_btnConfirmActionPerformed
+
+    private void rememberMeCheckboxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rememberMeCheckboxActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_rememberMeCheckboxActionPerformed
 
 
     /**
@@ -274,14 +262,11 @@ public class LoginScreen extends javax.swing.JFrame {
         UserRepository userRepository = new SqliteUserRepository(); 
         UserService userService = new UserService(userRepository);
 
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                LoginScreen loginScreen = new LoginScreen(ticketService, userService);
-                loginScreen.pack();
-                loginScreen.setLocationRelativeTo(null);
-                loginScreen.setVisible(true);
-            }
+        java.awt.EventQueue.invokeLater(() -> {
+            LoginScreen loginScreen = new LoginScreen(ticketService, userService);
+            loginScreen.pack();
+            loginScreen.setLocationRelativeTo(null);
+            loginScreen.setVisible(true);
         });
     }
 
@@ -293,6 +278,8 @@ public class LoginScreen extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel3;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
+    private javax.swing.JPanel jPanel3;
+    private javax.swing.JCheckBox rememberMeCheckbox;
     private javax.swing.JTextField txtPassword;
     private javax.swing.JTextField txtUsername;
     // End of variables declaration//GEN-END:variables
