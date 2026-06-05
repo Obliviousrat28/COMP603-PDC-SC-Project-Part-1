@@ -13,7 +13,7 @@ import java.sql.Statement;
 
 public class DatabaseManager {
     // 1. Derby Embedded URL setup. This creates a folder named "ServiceDeskDB" inside your project root
-    private static final String URL = "jdbc:derby:ServiceDeskUserDB;create=true";
+    private static final String URL = "jdbc:derby:ServiceDeskDB_Ebd;create=true";
 
     public static Connection getConnection() throws SQLException {
         return DriverManager.getConnection(URL);
