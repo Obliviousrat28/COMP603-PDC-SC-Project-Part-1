@@ -7,11 +7,7 @@ package com.group51.servicedeskproject.repository;
 import com.group51.servicedeskproject.model.Priority;
 import com.group51.servicedeskproject.model.Status;
 import com.group51.servicedeskproject.model.Ticket;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
