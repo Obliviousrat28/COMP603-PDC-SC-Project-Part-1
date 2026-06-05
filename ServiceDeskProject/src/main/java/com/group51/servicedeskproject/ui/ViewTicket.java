@@ -4,8 +4,10 @@
  */
 package com.group51.servicedeskproject.ui;
 
+import com.group51.servicedeskproject.model.Role;
 import com.group51.servicedeskproject.model.User;
 import com.group51.servicedeskproject.service.TicketService;
+import com.group51.servicedeskproject.service.UserService;
 
 /**
  *
@@ -14,12 +16,41 @@ import com.group51.servicedeskproject.service.TicketService;
 public class ViewTicket extends javax.swing.JFrame {
     
     private TicketService ticketService; 
+    private UserService userService;
     private User currentUser;
     
-    public ViewTicket(javax.swing.JFrame parentFrame, TicketService ticketService, User user) {
+    public ViewTicket(javax.swing.JFrame parentFrame, TicketService ticketService, UserService userService, User user) {
         this.ticketService = ticketService;
+        this.userService = userService;
         this.currentUser = user;
+        
         initComponents();
+        
+        if (this.currentUser != null && this.currentUser.getRole() == com.group51.servicedeskproject.model.Role.USER) {
+            if (this.comboStatus != null) {
+                this.comboStatus.setVisible(false); 
+            }
+            
+            if (this.statusLabel != null) { 
+                this.statusLabel.setVisible(false);
+            }
+            
+            if (this.statusConfirm != null) {
+                this.statusConfirm.setVisible(false); 
+            }
+            
+            if (this.priorityLabel != null) { 
+                this.priorityLabel.setVisible(false);
+            }
+            
+            if (this.comboPriority != null) {
+                this.comboPriority.setVisible(false); 
+            }
+            
+            if (this.priorityConfirm != null) { 
+                this.priorityConfirm.setVisible(false);
+            }
+        }
         
         this.setSize(parentFrame.getWidth(), parentFrame.getHeight());
         this.getContentPane().setLayout(null);
@@ -246,7 +277,7 @@ public class ViewTicket extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void backButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_backButtonActionPerformed
-        GUI mainMenu = new GUI(this, this.ticketService, this.currentUser);
+        GUI mainMenu = new GUI(this, this.ticketService, this.userService, this.currentUser);
         mainMenu.setSize(this.getWidth(), this.getHeight());
         mainMenu.setLocation(this.getLocationOnScreen()); 
         mainMenu.setVisible(true);
@@ -382,30 +413,6 @@ public class ViewTicket extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_getInfoActionPerformed
 
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ReflectiveOperationException | javax.swing.UnsupportedLookAndFeelException ex) {
-            logger.log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
-
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(() -> new ViewTicket().setVisible(true));
-    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton backButton;

@@ -4,6 +4,7 @@
  */
 package com.group51.servicedeskproject.ui;
 
+import com.group51.servicedeskproject.model.Role;
 import com.group51.servicedeskproject.model.User;
 import com.group51.servicedeskproject.repository.DerbyUserRepository;
 import com.group51.servicedeskproject.service.TicketService;
@@ -21,29 +22,72 @@ import java.util.logging.Level;
 public class GUI extends javax.swing.JFrame {
     
     private TicketService ticketService;
+    private UserService userService;
     private User currentUser;
 
-    public GUI(javax.swing.JFrame parentFrame, TicketService ticketService, User user) {
+    public GUI(javax.swing.JFrame parentFrame, TicketService ticketService, UserService userService, User user) {
         this.ticketService = ticketService;
+        this.userService = userService; 
         this.currentUser = user; 
         initComponents();
+      
+        
+        applyRolePermissions();
         this.setLocationRelativeTo(null);
     }    
     
-    // 2. Updated constructor: This is the one your LoginScreen calls!
-    public GUI(TicketService ticketService, User user) {
+    // Constructor 2: Fixes the LoginScreen error (Accepts exactly 3 arguments)
+    public GUI(TicketService ticketService, UserService userService, User user) {
         this.ticketService = ticketService;
+        this.userService = userService; 
         this.currentUser = user; 
         initComponents();
 
-        // Keeps your dashboard grid crisp and legible
-        this.setMinimumSize(new java.awt.Dimension(800, 600)); 
+        if (this.currentUser != null) {
+            Role activeRole = this.currentUser.getRole();
+            System.out.println("[GUI Handshake Check] Dashboard rendering for user: " 
+                                + currentUser.getUsername() + " with active role: " + activeRole);
+        }
 
+        applyRolePermissions();
+
+        this.setSize(new java.awt.Dimension(900, 650));
+        this.setMinimumSize(new java.awt.Dimension(800, 600));
+        
         this.setLocationRelativeTo(null);
     }
-    
+
+    // Constructor 3: Default fallback
     public GUI() {
         initComponents();
+    }
+
+    // 2. Add this security filter method at the bottom of your GUI class
+    private void applyRolePermissions() {
+        if (this.currentUser == null || this.currentUser.getRole() == null) {
+            return;
+        }
+        
+        if (this.btnChangeRoles != null) {
+            this.btnChangeRoles.setVisible(true); 
+        }
+
+        // If the user is NOT an ADMIN, completely hide the administrative access button
+        if (this.currentUser.getRole() != com.group51.servicedeskproject.model.Role.ADMIN) {
+            if (this.btnChangeRoles != null) {
+                this.btnChangeRoles.setVisible(false); 
+            }
+
+            // Optional: If you have a separate admin-only panel or tab, hide it here too:
+            // if (this.adminPanel != null) { this.adminPanel.setVisible(false); }
+        } else {
+            // If they are an Admin, explicitly make sure it's visible
+            if (this.btnChangeRoles != null) {
+                this.btnChangeRoles.setVisible(true);
+            }
+        }
+
+        // Rule: Admin can access absolutely everything (Leaves buttons enabled)
     }
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(GUI.class.getName());
@@ -63,6 +107,7 @@ public class GUI extends javax.swing.JFrame {
         jButton1 = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
         jButton3 = new javax.swing.JButton();
+        btnChangeRoles = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         getContentPane().setLayout(new java.awt.GridBagLayout());
@@ -127,6 +172,12 @@ public class GUI extends javax.swing.JFrame {
         gridBagConstraints.anchor = java.awt.GridBagConstraints.SOUTHEAST;
         getContentPane().add(jButton3, gridBagConstraints);
 
+        btnChangeRoles.setText("Roles");
+        btnChangeRoles.addActionListener(this::btnChangeRolesActionPerformed);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHEAST;
+        getContentPane().add(btnChangeRoles, gridBagConstraints);
+
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
@@ -155,7 +206,7 @@ public class GUI extends javax.swing.JFrame {
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         // Revert to empty parentheses until your teammate adds the constructor to ViewTicket
-        ViewTicket viewFrame = new ViewTicket(this, this.ticketService, this.currentUser);
+        ViewTicket viewFrame = new ViewTicket(this, this.ticketService, this.userService, this.currentUser);
         viewFrame.setSize(this.getWidth(), this.getHeight());
         viewFrame.setLocation(this.getLocationOnScreen());
         viewFrame.setVisible(true);
@@ -165,44 +216,43 @@ public class GUI extends javax.swing.JFrame {
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
         try {
             SessionManager.clearSession();
-            
-            UserRepository userRepository =
-                    new DerbyUserRepository(DatabaseConnection.getInstance().getConnection());
-            
+
+            // 1. Re-instantiate the repository using your database connection
+            UserRepository userRepository = new DerbyUserRepository(DatabaseConnection.getInstance().getConnection());
+
+            // 2. Define the missing freshUserService variable here!
             UserService freshUserService = new UserService(userRepository);
+
+            // 3. Now passing it here works perfectly
             LoginScreen freshLogin = new LoginScreen(this.ticketService, freshUserService);
             freshLogin.setLocationRelativeTo(null);
             freshLogin.setVisible(true);
             this.dispose();
-        } catch (SQLException ex) {
-            logger.log(Level.SEVERE, null, ex);
+        } catch (Exception ex) {
+            logger.log(Level.SEVERE, "Logout exception", ex);
         }
     }//GEN-LAST:event_jButton3ActionPerformed
 
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ReflectiveOperationException | javax.swing.UnsupportedLookAndFeelException ex) {
-            logger.log(java.util.logging.Level.SEVERE, null, ex);
+    private void btnChangeRolesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnChangeRolesActionPerformed
+        if (currentUser.getRole() != Role.ADMIN) {
+            javax.swing.JOptionPane.showMessageDialog(this, 
+                "Access Denied: You do not have permission to view or alter system roles.", 
+                "Security Exception", 
+                javax.swing.JOptionPane.ERROR_MESSAGE);
+            return; // Terminate execution immediately so the next screen never instantiates
         }
 
-        java.awt.EventQueue.invokeLater(() -> new GUI().setVisible(true));
-    }
+        // Safe to open now because we verified they are an Admin!
+        ChangeRolesGUI roleScreen = new ChangeRolesGUI(this, this.ticketService, this.userService, this.currentUser);
+        roleScreen.setSize(this.getWidth(), this.getHeight());
+        roleScreen.setLocation(this.getLocationOnScreen());
+        roleScreen.setVisible(true);
+        this.dispose();
+    }//GEN-LAST:event_btnChangeRolesActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnChangeRoles;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;

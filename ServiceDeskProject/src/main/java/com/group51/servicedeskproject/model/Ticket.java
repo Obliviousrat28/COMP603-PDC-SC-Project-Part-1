@@ -9,6 +9,7 @@ package com.group51.servicedeskproject.model;
  * @author kyvas
  */
 public class Ticket {
+    private static int idCounter = 1;
     private int id;
     private String title;
     private String description;

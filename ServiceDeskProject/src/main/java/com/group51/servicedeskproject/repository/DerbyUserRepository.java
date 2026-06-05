@@ -4,13 +4,13 @@
  */
 package com.group51.servicedeskproject.repository;
 
+import com.group51.servicedeskproject.model.Role;
 import com.group51.servicedeskproject.model.User;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- *
  * @author kyvas
  */
 public class DerbyUserRepository implements UserRepository {
@@ -29,7 +29,7 @@ public class DerbyUserRepository implements UserRepository {
 
             stmt.setString(1, user.getUsername());
             stmt.setString(2, user.getPassword());
-            stmt.setString(3, user.getRole());
+            stmt.setString(3, user.getRole().name()); // Converts Enum to text for SQL storage
 
             stmt.executeUpdate();
 
@@ -49,10 +49,13 @@ public class DerbyUserRepository implements UserRepository {
             ResultSet rs = stmt.executeQuery();
 
             if (rs.next()) {
+                // FIXED: Read the string from DB and convert it to your safe Role Enum
+                Role dbRole = Role.valueOf(rs.getString("role").toUpperCase().trim());
+                
                 return new User(
                     rs.getString("username"),
                     rs.getString("password"),
-                    rs.getString("role")
+                    dbRole
                 );
             }
 
@@ -65,20 +68,24 @@ public class DerbyUserRepository implements UserRepository {
 
     @Override
     public boolean isDatabaseEmpty() {
-        String sql = "SELECT COUNT(*) FROM Users";
-
-        try (Statement stmt = connection.createStatement();
-             ResultSet rs = stmt.executeQuery(sql)) {
+        String query = "SELECT COUNT(*) FROM Users"; // Make sure this matches your exact table name
+        try (PreparedStatement stmt = this.connection.prepareStatement(query);
+             ResultSet rs = stmt.executeQuery()) {
 
             if (rs.next()) {
-                return rs.getInt(1) == 0;
+                int rowCount = rs.getInt(1);
+                System.out.println("[Repository Check] Current user count in DB: " + rowCount);
+                return rowCount == 0;
             }
-
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.err.println("Database count check failed: " + e.getMessage());
+            e.printStackTrace(); // This prints the full stack trace to the console so you can see exactly what failed
+            
+            // ALTERNATIVE FALLBACK: If the query fails because the table is brand new/doesn't exist yet, 
+            // that technically means the database has 0 users. Let's return true here so the first setup can proceed.
+            return true;
         }
-
-        return true;
+        return false;
     }
 
     @Override
@@ -91,10 +98,13 @@ public class DerbyUserRepository implements UserRepository {
              ResultSet rs = stmt.executeQuery(sql)) {
 
             while (rs.next()) {
+                // FIXED: Read the string from DB and convert it to your safe Role Enum per loop pass
+                Role dbRole = Role.valueOf(rs.getString("role").toUpperCase().trim());
+                
                 users.add(new User(
                     rs.getString("username"),
                     rs.getString("password"),
-                    rs.getString("role")
+                    dbRole
                 ));
             }
 
@@ -106,12 +116,12 @@ public class DerbyUserRepository implements UserRepository {
     }
 
     @Override
-    public void updateUserRole(String username, String newRole) {
+    public void updateUserRole(String username, Role newRole) { // FIXED: Parameter changed from String to Role
         String sql = "UPDATE Users SET role = ? WHERE username = ?";
 
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
 
-            stmt.setString(1, newRole);
+            stmt.setString(1, newRole.name()); // Saves the Enum name text into the database table row
             stmt.setString(2, username);
 
             stmt.executeUpdate();
@@ -119,6 +129,5 @@ public class DerbyUserRepository implements UserRepository {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-    }
-    
+    }    
 }

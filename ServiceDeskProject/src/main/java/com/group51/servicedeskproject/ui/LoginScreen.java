@@ -192,7 +192,9 @@ public class LoginScreen extends javax.swing.JFrame {
 
     private void btnConfirmActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnConfirmActionPerformed
         String username = txtUsername.getText().trim();
-        String password = txtPassword.getText().trim();
+        
+        // Use standard text conversion if field variable remains JTextField during switch transitions
+        String password = txtPassword.getText().trim(); 
 
         if (username.isEmpty() || password.isEmpty()) {
             JOptionPane.showMessageDialog(this, "Fields cannot be empty!");
@@ -205,8 +207,6 @@ public class LoginScreen extends javax.swing.JFrame {
         } catch (Exception e) {
             logger.log(java.util.logging.Level.WARNING, "Check user existence failed", e);
         }
-
-        User authenticatedUser = null;
 
         if (existingUser == null) {
             int response = JOptionPane.showConfirmDialog(
@@ -222,7 +222,7 @@ public class LoginScreen extends javax.swing.JFrame {
             }
         }
 
-        authenticatedUser = userService.loginOrCreateProfile(username, password);
+        User authenticatedUser = userService.loginOrCreateProfile(username, password);
 
         if (authenticatedUser != null) {
             if (rememberMeCheckbox.isSelected()) {
@@ -231,12 +231,9 @@ public class LoginScreen extends javax.swing.JFrame {
                 com.group51.servicedeskproject.service.SessionManager.clearSession();
             }
 
-            GUI mainMenu = new GUI(this.ticketService, authenticatedUser);
+            GUI mainMenu = new GUI(this.ticketService, this.userService, authenticatedUser);
 
-            // Let the GUI layout determine its own ideal, stretchy window size
             mainMenu.pack(); 
-
-            // Center it beautifully on the monitor screen
             mainMenu.setLocationRelativeTo(null); 
             mainMenu.setVisible(true);
             this.dispose();

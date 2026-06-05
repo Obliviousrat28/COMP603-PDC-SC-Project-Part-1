@@ -4,6 +4,7 @@
  */
 package com.group51.servicedeskproject.repository;
 
+import com.group51.servicedeskproject.model.Role;
 import com.group51.servicedeskproject.model.User;
 import java.util.List;
 
@@ -12,5 +13,5 @@ public interface UserRepository {
     User findByUsername(String username);
     boolean isDatabaseEmpty(); // Crucial for your first-login bootstrap goal!
     List<User> getAllUsers();   // So the Admin can see profiles to change roles
-    void updateUserRole(String username, String newRole);
+    void updateUserRole(String username, Role newRole);
 }

@@ -55,7 +55,7 @@ public class ServiceDesk {
                     dummyParent.setSize(800, 600);
 
                     // 2. Pass the dummyParent instead of null so GUI.java line 25 doesn't crash!
-                    GUI mainMenu = new com.group51.servicedeskproject.ui.GUI(dummyParent, ticketService, user);
+                    GUI mainMenu = new com.group51.servicedeskproject.ui.GUI(dummyParent, ticketService, userService, user);
 
                     mainMenu.setSize(800, 600);
                     mainMenu.setLocationRelativeTo(null);
