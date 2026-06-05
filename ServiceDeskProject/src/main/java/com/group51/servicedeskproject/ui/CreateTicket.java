@@ -7,6 +7,7 @@ package com.group51.servicedeskproject.ui;
 import com.group51.servicedeskproject.service.TicketService;
 import com.group51.servicedeskproject.model.Priority; // Adjust package path if needed
 import com.group51.servicedeskproject.model.User;
+import com.group51.servicedeskproject.service.UserService;
 
 /**
  *
@@ -15,6 +16,7 @@ import com.group51.servicedeskproject.model.User;
 public class CreateTicket extends javax.swing.JFrame {
     
     private TicketService ticketService;
+    private UserService userService;
     private User currentUser;
 
     // 3. Update the constructor to accept the service
@@ -179,7 +181,7 @@ public class CreateTicket extends javax.swing.JFrame {
 
     private void Back_ButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_Back_ButtonActionPerformed
         // Pass the running service back so the main menu doesn't break
-        GUI mainMenu = new GUI(this, this.ticketService, this.currentUser);
+        GUI mainMenu = new GUI(this, this.ticketService, this.userService, this.currentUser);
         mainMenu.setSize(this.getWidth(), this.getHeight());
         mainMenu.setLocation(this.getLocationOnScreen()); 
         mainMenu.setVisible(true);
@@ -236,36 +238,13 @@ public class CreateTicket extends javax.swing.JFrame {
             javax.swing.JOptionPane.INFORMATION_MESSAGE);
 
         // 6. Reset Form: Wipe out all inputs cleanly so a new ticket can be typed immediately
-        ID_Enter.setText("");
-        Department_Enter.setText("");
-        Title_Enter.setText("");
-        Description_Enter.setText("");
+        CreateTicket createFrame = new CreateTicket(this, this.ticketService, this.currentUser); 
+        createFrame.setSize(this.getWidth(), this.getHeight());
+        createFrame.setLocation(this.getLocationOnScreen());
+        createFrame.setVisible(true);
+        this.dispose();
     }//GEN-LAST:event_Update_ButtonActionPerformed
 
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ReflectiveOperationException | javax.swing.UnsupportedLookAndFeelException ex) {
-            logger.log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
-
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(() -> new CreateTicket().setVisible(true));
-    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton Back_Button;
