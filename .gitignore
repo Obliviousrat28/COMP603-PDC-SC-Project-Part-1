@@ -1,2 +1,13 @@
 /ServiceDeskProject/target/
 tickets.txt
+
+ServiceDeskDB_Ebd/
+derby.log
+
+# Derby embedded databases
+**/*DB_Ebd/
+**/*UserDB/
+**/*.log
+**/derby.log
+**/seg0/
+**/log/
