@@ -15,7 +15,7 @@ import java.sql.ResultSet;
  */
 public class TestDB {
     public static void main(String[] args) {
-        try (Connection conn = DatabaseConnection.getConnection()) {
+        try (Connection conn = DatabaseConnection.getInstance().getConnection()) {
             System.out.println("Database connected successfully!");
             
             DatabaseMetaData meta = conn.getMetaData();
