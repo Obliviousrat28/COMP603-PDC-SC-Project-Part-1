@@ -18,18 +18,30 @@ public class InMemoryTicketRepository implements TicketRepository {
     private List<Ticket> tickets = new ArrayList<>();
 
     @Override
-    public void saveAll(List<Ticket> tickets) {
-        this.tickets = new ArrayList<>(tickets); // copy for safety
+    public void save(Ticket ticket) {
+        tickets.add(ticket);
     }
-    
+
     @Override
-    public List<Ticket> load() {
-        return new ArrayList<>(tickets); // return copy
+    public void update(Ticket ticket) {
+        Ticket existing = findById(ticket.getId());
+
+        if (existing != null) {
+            tickets.remove(existing);
+            tickets.add(ticket);
+        }
     }
-    
+
     @Override
-    public List<Ticket> getAllTickets() {
-        // Simply return the memory list this specific class uses (line 8)
-        return this.tickets; 
+    public Ticket findById(int id) {
+        return tickets.stream()
+                .filter(t -> t.getId() == id)
+                .findFirst()
+                .orElse(null);
+    }
+
+    @Override
+    public List<Ticket> findAll() {
+        return new ArrayList<>(tickets);
     }
 }

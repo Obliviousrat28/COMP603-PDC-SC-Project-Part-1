@@ -12,8 +12,11 @@ import java.util.List;
  * @author kyvas
  */
 public interface TicketRepository {
-    void saveAll(List<Ticket> tickets);
-    List<Ticket> load();
-    
-    List<Ticket> getAllTickets();
+    void save(Ticket ticket);
+
+    void update(Ticket ticket);
+
+    Ticket findById(int id);
+
+    List<Ticket> findAll();
 }

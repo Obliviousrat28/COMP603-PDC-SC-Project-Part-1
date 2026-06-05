@@ -15,33 +15,43 @@ public class FileTicketRepository implements TicketRepository {
 
     private static final String FILE_PATH = "tickets.txt";
 
-    private List<Ticket> tickets;
+    private List<Ticket> cache = new ArrayList<>();
     
     public FileTicketRepository() {
-        this.tickets = load(); // 👈 Make sure this method is actually being called here!
+        this.cache = loadFromFile(); // 👈 Make sure this method is actually being called here!
     }
     
     @Override
-    public void saveAll(List<Ticket> tickets) {
-        try (PrintWriter out = new PrintWriter(new FileWriter(FILE_PATH))) {
-
-            for (Ticket t : tickets) {
-                // Format: id|title|description|department|priority|status
-                out.println(t.getId() + "|" +
-                            t.getTitle() + "|" +
-                            t.getDescription() + "|" +
-                            t.getDepartment() + "|" +
-                            t.getPriority() + "|" +
-                            t.getStatus());
-            }
-
-        } catch (IOException e) {
-            System.err.println("Error saving to file: " + e.getMessage());
-        }
+    public void save(Ticket ticket) {
+        cache.add(ticket);
+        saveToFile();
     }
 
     @Override
-    public List<Ticket> load() {
+    public void update(Ticket ticket) {
+        Ticket existing = findById(ticket.getId());
+
+        if (existing != null) {
+            cache.remove(existing);
+            cache.add(ticket);
+            saveToFile();
+        }
+    }
+    
+    @Override
+    public Ticket findById(int id) {
+        return cache.stream()
+                .filter(t -> t.getId() == id)
+                .findFirst()
+                .orElse(null);
+    }
+    
+    @Override
+    public List<Ticket> findAll() {
+        return new ArrayList<>(cache);
+    }
+    
+    private List<Ticket> loadFromFile() {
         List<Ticket> tickets = new ArrayList<>();
 
         File file = new File(FILE_PATH);
@@ -54,30 +64,42 @@ public class FileTicketRepository implements TicketRepository {
                 String[] parts = line.split("\\|");
 
                 if (parts.length == 6) {
-                    int id = Integer.parseInt(parts[0]);
-                    String title = parts[1];
-                    String desc = parts[2];
-                    String dept = parts[3];
-                    Priority priority = Priority.valueOf(parts[4]);
-                    Status status = Status.valueOf(parts[5]);
+                    Ticket t = new Ticket(
+                            Integer.parseInt(parts[0]),
+                            parts[1],
+                            parts[2],
+                            Priority.valueOf(parts[4]),
+                            parts[3]
+                    );
 
-                    Ticket ticket = new Ticket(id, title, desc, priority, dept);
-                    ticket.updateStatus(status);
-
-                    tickets.add(ticket);
+                    t.updateStatus(Status.valueOf(parts[5]));
+                    tickets.add(t);
                 }
             }
 
-        } catch (IOException | IllegalArgumentException e) {
-            System.err.println("Error loading from file: " + e.getMessage());
+        } catch (Exception e) {
+            System.err.println("Error loading file: " + e.getMessage());
         }
 
         return tickets;
     }
     
-    @Override
-    public List<Ticket> getAllTickets() {
-        // Simply return the list we loaded on startup!
-        return this.tickets;
+    private void saveToFile() {
+        try (PrintWriter out = new PrintWriter(new FileWriter(FILE_PATH))) {
+
+            for (Ticket t : cache) {
+                out.println(
+                        t.getId() + "|" +
+                        t.getTitle() + "|" +
+                        t.getDescription() + "|" +
+                        t.getDepartment() + "|" +
+                        t.getPriority() + "|" +
+                        t.getStatus()
+                );
+            }
+
+        } catch (IOException e) {
+            System.err.println("Error saving file: " + e.getMessage());
+        }
     }
 }
