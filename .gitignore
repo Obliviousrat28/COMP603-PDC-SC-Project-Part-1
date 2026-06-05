@@ -1,19 +1,14 @@
 /ServiceDeskProject/target/
 tickets.txt
 
-ServiceDeskDB_Ebd/
-derby.log
-
-# Derby embedded databases
-**/*DB_Ebd/
-**/*UserDB/
-**/*.log
-**/derby.log
-**/seg0/
-**/log/
-
-seg0/
-log/
-db.lck
+# Derby database files
+**/ServiceDeskDB_Ebd/
+**/ServiceDeskUserDB/
+*.lck
 *.dat
-service.properties
+*.log
+*.tmp
+*.properties
+
+# App runtime/session files
+ServiceDeskProject/user_session.properties
